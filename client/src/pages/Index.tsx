@@ -14,7 +14,7 @@ const mockAlerts: AlertType[] = [
     latitude: 40.7128,
     longitude: -74.006,
     timestamp: new Date().toISOString(),
-    description: 'Large fire detected in residential building. Multiple heat signatures detected.',
+    description: 'Large fire detected in residential building. Multiple heat signatures detected. Large fire detected in residential building. Multiple heat signatures detected. Large fire detected in residential building. Multiple heat signatures detected.',
     image: '/images/fire.png',
   },
   {
