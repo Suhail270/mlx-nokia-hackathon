@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 72.2% 50.6%;
+    --primary-foreground: 0 85.7% 97.3%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-inter;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+.mapboxgl-map {
+  @apply rounded-lg;
+}
+
+.alert-marker {
+  @apply w-8 h-8 rounded-full flex items-center justify-center text-white cursor-pointer transform transition-transform hover:scale-110;
+}
+
+.alert-marker-critical {
+  @apply bg-red-500;
+}
+
+.alert-marker-warning {
+  @apply bg-orange-500;
+}
+
+.alert-marker-info {
+  @apply bg-blue-500;
+}
+
+.panel-slide {
+  @apply transform transition-transform duration-300;
+}
+
+.panel-slide-enter {
+  @apply translate-x-full;
+}
+
+.panel-slide-enter-active {
+  @apply translate-x-0;
+}
+
+.panel-slide-exit {
+  @apply translate-x-0;
+}
+
+.panel-slide-exit-active {
+  @apply translate-x-full;
+}
