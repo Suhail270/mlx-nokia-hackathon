@@ -63,7 +63,7 @@ const testAlert: AlertType = {
     severity: 'critical',
     location: 'Jumeirah Village Circle, Dubai',
     timestamp: '2023-10-01T15:30:00Z',
-    description: 'A fire broke out on the 12th floor of the Silver Heights Apartment complex...',
+    description: 'A fire broke out on the 12th floor of the Silver Heights Apartment complex - repeating again - A fire broke out on the 12th floor of the Silver Heights Apartment complex...',
     image: '/images/fire-alert.png',
 };
 
@@ -71,7 +71,6 @@ const Index = () => {
   return (
     <AlertDetails 
       alert={testAlert} 
-      onBack={() => console.log('back clicked')} 
     />
   );
 };
