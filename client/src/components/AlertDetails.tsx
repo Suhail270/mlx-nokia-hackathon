@@ -97,13 +97,13 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
           </div>
 
           {/* Placeholder for Map */}
-          <div className="text-white text-sm bg-secondary rounded-lg m-5 p-20"> 
-            Map
+          <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[30%] w-[93%] overflow-hidden">
+            <Map alerts={[alert]} onAlertSelect={() => {}} />
           </div>
         </div>
 
         {/* Right Section - Image */}
-        <div className="text-white w-1/2 bg-secondary rounded-lg mb-14 mt-5 mr-10 p-7">
+        <div className="text-white w-1/2 bg-secondary rounded-lg mb-14 mt-5 mr-10 p-7 h-[88%]">
           Image
         </div>
       </div>
