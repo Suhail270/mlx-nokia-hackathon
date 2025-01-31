@@ -14,15 +14,11 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
     setChatbotVisible(!chatbotVisible);
   };
 
-  const toggleResolved = () => {
-    setIsResolved(!isResolved); 
-  };
-
 
   return (
     <div className="bg-background w-full mt-5 pl-2 relative">
 
-        <div className='flex'>
+        <div className='flex gap-[83%]'>
             {/* Back button */}
             <div>
                 <Button 
@@ -35,16 +31,20 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
             </div>
 
             {/* Status Button */}
-            <div className="absolute left-3/4 transform -translate-x-1/2">
-                <Button
-                    className={`px-4 py-2 text-white font-semibold rounded-full ${
-                        isResolved ? 'bg-green-500/20' : 'bg-red-500/20'
-                    } hover:bg-opacity-80`} // Added hover opacity change
-                    onClick={toggleResolved}
-                    >
-                    {isResolved ? 'Resolved' : 'Unresolved'}
-                </Button>
+            <div className=''>
+              <Button
+                  onClick={() => setIsResolved(!isResolved)}
+                  variant="outline"
+                  className={`ml-4 rounded-full ${
+                      isResolved 
+                          ? 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500' 
+                          : 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
+                  }`}
+              >
+                  {isResolved ? 'Resolved' : 'Unresolved'}
+              </Button>
             </div>
+          
         </div>
 
       
@@ -103,7 +103,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
       {/* Chatbot Popup Button */}
       <div
         onClick={toggleChatbot}
-        className="fixed bottom-5 right-5 bg-purple-400 p-3 rounded-full shadow-lg cursor-pointer mb-2"
+        className="fixed bottom-5 right-5 bg-purple-400/80 p-3 rounded-full shadow-lg cursor-pointer mb-2"
       >
         <span className="text-black"><MessageSquare className='w-6 h-6 scale-x-[-1]'/> </span> {/* Chat icon */}
       </div>
