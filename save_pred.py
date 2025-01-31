@@ -5,8 +5,8 @@ from inference import InferencePipeline
 from inference.core.interfaces.camera.entities import VideoFrame
 
 # Input & Output directories
-input_folder = "/Users/asmithakrishnakumar/Desktop/mlx-nokia-hackathon/videos"
-output_folder = "/Users/asmithakrishnakumar/Desktop/mlx-nokia-hackathon/annotated_videos"
+input_folder = "./mlx-nokia-hackathon/videos"
+output_folder = "./mlx-nokia-hackathon/annotated_videos"
 
 # Ensure output folder exists
 os.makedirs(output_folder, exist_ok=True)
