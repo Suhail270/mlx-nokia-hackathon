@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AlertType } from '@/types/alerts';
-import { ChevronLeft, Bell, MapPin, Clock, MessageSquare } from 'lucide-react';
+import { ChevronLeft, Bell, MapPin, Clock, MessageSquare, ArrowBigLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Map from '@/components/Map';
@@ -18,34 +18,42 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
   return (
     <div className="bg-background w-full mt-5 pl-2 relative">
 
-        <div className='flex gap-[83%]'>
-            {/* Back button */}
-            <div>
-                <Button 
-                    variant="ghost" 
-                    className="flex items-center gap-2 hover:bg-transparent" 
-                    onClick={onBack} // Calls the function to go back
-                    >
-                    <ChevronLeft className="w-10 h-10" />
-                </Button>
-            </div>
+<div className="flex items-center justify-between ml-4">
+        {/* Back button */}
+        <Button 
+          variant="ghost" 
+          className="flex items-center gap-2 hover:bg-transparent p-2" 
+          onClick={onBack}
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="50" 
+            height="50" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            stroke-width="2" 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            className="transform scale-150"
+          >
+            <path d="M18 15h-6v4l-7-7 7-7v4h6v6z"/>
+          </svg>
+        </Button>
 
-            {/* Status Button */}
-            <div className=''>
-              <Button
-                  onClick={() => setIsResolved(!isResolved)}
-                  variant="outline"
-                  className={`ml-4 rounded-full ${
-                      isResolved 
-                          ? 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500' 
-                          : 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
-                  }`}
-              >
-                  {isResolved ? 'Resolved' : 'Unresolved'}
-              </Button>
-            </div>
-          
-        </div>
+        {/* Status Button */}
+        <Button
+          onClick={() => setIsResolved(!isResolved)}
+          variant="outline"
+          className={`rounded-full mr-10 ${
+            isResolved 
+              ? 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500' 
+              : 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
+          }`}
+        >
+          {isResolved ? 'Resolved' : 'Unresolved'}
+        </Button>
+      </div>
 
       
 
