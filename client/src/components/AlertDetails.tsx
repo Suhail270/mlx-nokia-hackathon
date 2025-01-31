@@ -104,7 +104,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
 
         {/* Right Section - Image */}
         <div className="text-white w-1/2 bg-secondary rounded-lg mb-14 mt-5 mr-10 p-7 h-[88%]">
-          Image
+          <img src={alert.image}></img>
         </div>
       </div>
 
