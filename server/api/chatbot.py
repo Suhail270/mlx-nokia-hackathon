@@ -1,12 +1,11 @@
-# server/api/chatbot.py
 import os
 import pickle
 import numpy as np
 import faiss
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from server.services.search_service import embed_text, rerank_passages, generate_answer
-from server.utils.logging_config import logger
+from services.search_service import embed_text, rerank_passages, generate_answer
+from utils.logging_config import logger
 
 router = APIRouter()
 

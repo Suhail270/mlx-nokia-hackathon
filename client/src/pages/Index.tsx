@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, useParams, useNavigate } from 'react-router-dom';
 import Map from '@/components/Map';
 import axios from 'axios';
 import AlertList from '@/components/AlertList';
@@ -7,16 +8,13 @@ import { AlertType } from '@/types/alerts';
 
 const Index = () => {
   const [alerts, setAlerts] = useState<AlertType[]>([]);
-  // Default midpoint is set to NYC coordinates in case the backend call fails or hasn't returned yet
   const [midpoint, setMidpoint] = useState<[number, number]>([40.7128, -74.006]);
-  const [selectedAlert, setSelectedAlert] = useState<AlertType | null>(null);
+  const navigate = useNavigate();
 
-  // ✅ Fetch Alerts and Midpoint from FastAPI (SQLite)
   useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/api/alerts_with_midpoint")
       .then((res) => {
-        // Assuming the backend returns { alerts: AlertType[], midpoint: [number, number] }
         setAlerts(res.data.alerts);
         setMidpoint(res.data.midpoint);
       })
@@ -24,35 +22,71 @@ const Index = () => {
   }, []);
 
   const handleAlertSelect = (alert: AlertType) => {
-    setSelectedAlert(alert);
-  };
-
-  const handleBack = () => {
-    setSelectedAlert(null);
+    navigate(`/alert/${alert.id}`);
   };
 
   return (
     <div className="h-screen w-full overflow-hidden bg-background text-foreground">
-      {selectedAlert ? (
-        // Show AlertDetails if an alert is selected
-        <AlertDetails alert={selectedAlert} onBack={handleBack} />
-      ) : (
-        // Show Map and Alert List when no alert is selected
-        <>
-          <div className="pl-80 pr-0">
-            <div className="p-6">
-              <Map
-                alerts={alerts}
-                midpoint={midpoint}
-                onAlertSelect={handleAlertSelect}
-              />
-            </div>
-          </div>
-          <AlertList alerts={alerts} onAlertSelect={handleAlertSelect} />
-        </>
-      )}
+      <div className="pl-80 pr-0">
+        <div className="p-6">
+          <Map
+            alerts={alerts}
+            midpoint={midpoint}
+            onAlertSelect={handleAlertSelect}
+          />
+        </div>
+      </div>
+      <AlertList alerts={alerts} onAlertSelect={handleAlertSelect} />
     </div>
   );
 };
 
-export default Index;
+const AlertDetailPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const [alert, setAlert] = useState<AlertType | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:8000/api/alerts/${id}`)
+      .then((res) => {
+        setAlert(res.data);
+      })
+      .catch((err) => console.error("Error fetching alert details:", err));
+
+    axios
+      .get(`http://127.0.0.1:8000/api/vectorstore/${id}`)
+      .then((res) => {
+        console.log("Vector store is ready:", res.data.message);
+      })
+      .catch((err) => {
+        console.error("Error sending id to vector store:", err);
+      });
+
+  }, [id]);
+
+  const handleBack = () => {
+    navigate('/');
+  };
+
+  if (!alert) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <AlertDetails alert={alert} onBack={handleBack} />
+  );
+};
+
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/alert/:id" element={<AlertDetailPage />} />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App;
