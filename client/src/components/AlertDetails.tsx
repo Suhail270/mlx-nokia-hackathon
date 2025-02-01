@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Map from '@/components/Map';
 import Image from 'next/image';
+import { MdClose } from 'react-icons/md';
+import { IoIosCloseCircle,IoMdCloseCircle } from "react-icons/io";
 
 const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void }) => {
   const [chatbotVisible, setChatbotVisible] = useState(false);
@@ -198,10 +200,11 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
 
       {/* Chatbot Popup */}
       {chatbotVisible && (
-        <div className="fixed bottom-12 right-16 w-80 h-96 bg-white shadow-lg rounded-t-lg p-5 rounded-lg flex flex-col">
+        <div className="fixed bottom-16 right-16 w-[38rem] h-[30rem] bg-background shadow-lg rounded-t-lg p-5 rounded-lg flex flex-col border border-gray-500">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Chatbot</h3>
-            <Button variant="ghost" onClick={toggleChatbot} className='text-white bg-black'>X</Button>
+            <h3 className="text-lg font-semibold text-black">Chatbot</h3>
+            <IoIosCloseCircle size={30}variant="ghost" onClick={toggleChatbot} />
+            {/* <Button variant="ghost" onClick={toggleChatbot} className='text-white bg-black px-3 py-2 text-sm'></Button> */}
           </div>
           <div className="mt-4 flex-1 overflow-y-auto space-y-2">
             {messages.map((message, index) => (
@@ -214,7 +217,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
                 <div
                   className={`max-w-[70%] p-3 rounded-lg ${
                     message.sender === 'user'
-                      ? 'bg-blue-500 text-white rounded-br-none'
+                      ? 'bg-purple-400/80 text-white rounded-br-none'
                       : 'bg-gray-100 text-gray-800 rounded-bl-none'
                   }`}
                 >
@@ -223,17 +226,17 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
               </div>
             ))}
           </div>
-          <div className="mt-4 flex relative">
+          <div className="mt-4 flex space-x-2 relative">
             <input
               type="text"
               value={inputValue}
               onChange={handleInputChange}
-              className="flex-1 p-2 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
               placeholder="Type a message..."
             />
             <Button
               onClick={handleSendMessage}
-              className="bg-blue-500 text-white rounded-r hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="bg-purple-400/80 text-white rounded-r hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               Send
             </Button>
