@@ -14,6 +14,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
     setChatbotVisible(!chatbotVisible);
   };
 
+  console.log('Video Path:', alert.video_path);
 
   return (
     <div className="bg-background w-full mt-5 pl-2 relative">
@@ -114,11 +115,22 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
 
 
         </div>
-
+        <script>console.log('Video Path:', alert.video_path);</script>
         {/* Right Section - Image */}
         <div className="text-white w-1/2 bg-secondary rounded-lg mb-14 mt-5 mr-10 p-7 h-[88%]">
           <img src={alert.image}></img>
         </div>
+        {/* Right Section - Video
+        <div className="text-white w-1/2 bg-secondary rounded-lg mb-14 mt-5 mr-10 p-7 h-[88%]">
+          <video
+            src={alert.video_path}
+            controls
+            className="w-full h-full object-cover rounded-lg"
+          >
+            Your browser does not support the video tag.
+          </video>
+        </div> */}
+
       </div>
 
       {/* Chatbot Popup Button */}

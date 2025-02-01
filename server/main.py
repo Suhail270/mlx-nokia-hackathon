@@ -5,10 +5,18 @@ from models.alert import Alert
 from api import alerts, events, chatbot
 from utils.logging_config import logger
 from api import alerts, events, chatbot, vectorstore, summary
+from fastapi.staticfiles import StaticFiles
+import os
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+# # Determine the absolute path to the 'annotated_videos' directory
+# video_directory = os.path.abspath("annotated_videos/")
+
+# # Mount the 'annotated_videos' directory to serve static files
+# app.mount("/videos", StaticFiles(directory=video_directory), name="videos")
 
 app.add_middleware(
     CORSMiddleware,
