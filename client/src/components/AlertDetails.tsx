@@ -9,17 +9,72 @@ import Image from 'next/image';
 const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void }) => {
   const [chatbotVisible, setChatbotVisible] = useState(false);
   const [isResolved, setIsResolved] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [messages, setMessages] = useState([
+    { text: 'Hi, how can I help you?', sender: 'chatbot' }, 
+  ]);
+
 
   const toggleChatbot = () => {
     setChatbotVisible(!chatbotVisible);
   };
 
-  console.log('Video Path:', alert.video_path);
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleSendMessage = async () => {
+    if (inputValue.trim() === "") return; // Don't send empty messages
+  
+    // Add the user's message to the messages array
+    const userMessage = { sender: 'user', text: inputValue };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+  
+    // Prepare the conversation history (excluding the default message)
+    const conversationHistory = messages
+      .filter((msg) => msg.text !== "hi what can I help you with") // Exclude the default message
+      .map((msg) => ({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.text }));
+  
+    // Add the user's current message to the conversation history
+    conversationHistory.push({ role: 'user', content: inputValue });
+  
+    try {
+      // Send the user's message and conversation history to the API
+      const response = await fetch(`http://localhost:8000/api/chat_with_alert/${alert.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: inputValue,
+          conversation_history: conversationHistory,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+  
+      const data = await response.json();
+  
+      // Add the chatbot's response to the messages array
+      const botMessage = { sender: 'chatbot', text: data.answer };
+      setMessages((prevMessages) => [...prevMessages, botMessage]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorMessage = { sender: 'chatbot', text: "Sorry, something went wrong. Please try again." };
+      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+    }
+  
+    // Clear the input field
+    setInputValue('');
+  };
+
 
   return (
     <div className="bg-background w-full mt-5 pl-2 relative">
 
-<div className="flex items-center justify-between ml-4">
+    <div className="flex items-center justify-between ml-4">
         {/* Back button */}
         <Button 
           variant="ghost" 
@@ -143,13 +198,45 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
 
       {/* Chatbot Popup */}
       {chatbotVisible && (
-        <div className="fixed bottom-6 right-14 w-80 h-96 bg-white shadow-lg rounded-t-lg p-5 rounded-lg">
+        <div className="fixed bottom-12 right-16 w-80 h-96 bg-white shadow-lg rounded-t-lg p-5 rounded-lg flex flex-col">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Chatbot</h3>
             <Button variant="ghost" onClick={toggleChatbot} className='text-white bg-black'>X</Button>
           </div>
-          <div className="mt-4">
-            {/* You can add actual chatbot content here */}
+          <div className="mt-4 flex-1 overflow-y-auto space-y-2">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex ${
+                  message.sender === 'user' ? 'justify-end' : 'justify-start'
+                }`}
+              >
+                <div
+                  className={`max-w-[70%] p-3 rounded-lg ${
+                    message.sender === 'user'
+                      ? 'bg-blue-500 text-white rounded-br-none'
+                      : 'bg-gray-100 text-gray-800 rounded-bl-none'
+                  }`}
+                >
+                  {message.text}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 flex relative">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              className="flex-1 p-2 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              placeholder="Type a message..."
+            />
+            <Button
+              onClick={handleSendMessage}
+              className="bg-blue-500 text-white rounded-r hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Send
+            </Button>
           </div>
         </div>
       )}

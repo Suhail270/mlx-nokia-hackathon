@@ -1,4 +1,3 @@
-# server/api/chatbot.py
 import os
 import pickle
 import numpy as np

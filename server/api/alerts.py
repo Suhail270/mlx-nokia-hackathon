@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from db.session import get_db
 from models.alert import Alert
@@ -19,6 +19,11 @@ def extract_midpoints_alerts(alerts):
 def get_alerts(db=Depends(get_db)):
     alerts = db.query(Alert).all()
     return jsonable_encoder(alerts)
+
+@router.get("/alerts/{alert_id}")
+def get_alert_details(alert_id:str, db=Depends(get_db)):
+    alert = db.query(Alert).filter(Alert.id == alert_id).first()
+    return jsonable_encoder(alert)
 
 @router.get("/alerts_with_midpoint")
 def get_alerts_with_midpoint(db=Depends(get_db)):
