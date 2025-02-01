@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import Map from '@/components/Map';
-import AlertPanel from '@/components/AlertPanel';
 import AlertList from '@/components/AlertList';
+import AlertDetails from '@/components/AlertDetails';
 import { AlertType } from '@/types/alerts';
 
-// Mock data for demonstration
+// Mock alerts
 const mockAlerts: AlertType[] = [
   {
     id: '1',
@@ -12,10 +12,10 @@ const mockAlerts: AlertType[] = [
     severity: 'critical',
     location: '123 Main St, New York, NY',
     latitude: 40.7128,
-    longitude: -74.0060,
+    longitude: -74.006,
     timestamp: new Date().toISOString(),
-    description: 'Large fire detected in residential building. Multiple heat signatures detected.',
-    image: 'https://images.unsplash.com/photo-1599171571332-6d1c69c9f708?q=80&w=500&auto=format&fit=crop',
+    description: 'Large fire detected in residential building. Multiple heat signatures detected. Large fire detected in residential building. Multiple heat signatures detected. Large fire detected in residential building. Multiple heat signatures detected.',
+    image: '@/images/fire.png',
   },
   {
     id: '2',
@@ -26,7 +26,7 @@ const mockAlerts: AlertType[] = [
     longitude: -73.9765,
     timestamp: new Date().toISOString(),
     description: 'Potential assault detected in parking garage. Two individuals involved.',
-    image: 'https://images.unsplash.com/photo-1617897711385-df9c86b7deb9?q=80&w=500&auto=format&fit=crop',
+    image: '@/images/fire.png',
   },
 ];
 
@@ -37,19 +37,26 @@ const Index = () => {
     setSelectedAlert(alert);
   };
 
-  const handleClosePanel = () => {
+  const handleBack = () => {
     setSelectedAlert(null);
   };
 
   return (
     <div className="h-screen w-screen overflow-hidden bg-background text-foreground">
-      <div className="pl-80 pr-0">
-        <div className="p-6">
-          <Map alerts={mockAlerts} onAlertSelect={handleAlertSelect} />
-        </div>
-      </div>
-      <AlertList alerts={mockAlerts} onAlertSelect={handleAlertSelect} />
-      <AlertPanel alert={selectedAlert} onClose={handleClosePanel} />
+      {selectedAlert ? (
+        // Show AlertDetails if an alert is selected
+        <AlertDetails alert={selectedAlert} onBack={handleBack} />
+      ) : (
+        // Show Map and Alert List when no alert is selected
+        <>
+          <div className="pl-80 pr-0">
+            <div className="p-6">
+              <Map alerts={mockAlerts} onAlertSelect={handleAlertSelect} />
+            </div>
+          </div>
+          <AlertList alerts={mockAlerts} onAlertSelect={handleAlertSelect} />
+        </>
+      )}
     </div>
   );
 };
