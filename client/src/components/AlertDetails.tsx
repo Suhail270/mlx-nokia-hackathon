@@ -32,9 +32,9 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
             viewBox="0 0 24 24" 
             fill="none" 
             stroke="currentColor" 
-            stroke-width="2" 
-            stroke-linecap="round" 
-            stroke-linejoin="round" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
             className="transform scale-150"
           >
             <path d="M18 15h-6v4l-7-7 7-7v4h6v6z"/>
@@ -65,12 +65,9 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
           <div className="flex gap-6 p-5"> 
             <div className="text-white text-sm w-1/3 bg-secondary rounded-lg p-5"> 
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-full
-                  ${alert.type === 'fire' ? 'bg-red-500/20 text-red-500' :
-                    alert.type === 'assault' ? 'bg-orange-500/20 text-orange-500' :
-                    'bg-blue-500/20 text-blue-500'}`} >
-                  {/* <Bell className="w-4 h-4" /> */}
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                <div className={`p-2 rounded-full          
+                  ${alert.type === 'fire' ? 'bg-red-500/20 text-red-500' : 'bg-orange-500/20 text-orange-500' }`} >
+                  <Bell className="w-4 h-4" />
                 </div>
                 
                 <div>
@@ -81,7 +78,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
 
             {/* Location */}
             <div className="text-white text-sm w-2/3 bg-secondary rounded-lg p-5"> 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 pt-2 justify-center">
                 <MapPin className="w-4 h-4" />
                 <p className="text-muted-foreground">{alert.location}</p>
               </div>
@@ -89,7 +86,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
           </div>
 
           {/* Alert Details */}
-          <div className="text-white text-sm bg-secondary rounded-lg mt-2 mx-5 p-5"> 
+          <div className="text-white text-sm bg-secondary rounded-lg mt-2 mx-5 p-5 pt-3 h-[30%]"> 
             <div className="flex items-center gap-2 mb-4">
               <Clock className="w-5 h-5" />
               <h3 className="text-lg font-semibold">Details</h3>
@@ -98,9 +95,24 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
           </div>
 
           {/* Placeholder for Map */}
-          <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[30%] w-[93%] overflow-hidden">
-            <Map alerts={[alert]} onAlertSelect={() => {}} />
+          {/* <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[33.5%] w-[93%] overflow-hidden">
+            <Map 
+              alerts={[alert]} 
+              onAlertSelect={() => {}} 
+              midpoint={[alert.latitude, alert.longitude]} 
+            />
+          </div> */}
+
+          <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[33.5%] w-[93%] overflow-hidden">
+            <Map 
+              alerts={[alert]} 
+              onAlertSelect={() => {}} 
+              midpoint={[alert.latitude, alert.longitude]} 
+              centerOffset={100}
+            />
           </div>
+
+
         </div>
 
         {/* Right Section - Image */}
