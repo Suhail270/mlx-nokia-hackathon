@@ -54,10 +54,11 @@ const AlertDetailPage = () => {
       })
       .catch((err) => console.error("Error fetching alert details:", err));
 
+    // to send data to vector store
     axios
       .get(`http://127.0.0.1:8000/api/vectorstore/${id}`)
       .then((res) => {
-        console.log("Vector store is ready:", res.data.message);
+        console.log("Vector store created:", res.data.message);
       })
       .catch((err) => {
         console.error("Error sending id to vector store:", err);
