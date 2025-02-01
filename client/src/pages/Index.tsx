@@ -14,7 +14,7 @@ const Index = () => {
   // ✅ Fetch Alerts and Midpoint from FastAPI (SQLite)
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/alerts_with_midpoint")
+      .get("http://127.0.0.1:8000/api/alerts_with_midpoint")
       .then((res) => {
         // Assuming the backend returns { alerts: AlertType[], midpoint: [number, number] }
         setAlerts(res.data.alerts);
