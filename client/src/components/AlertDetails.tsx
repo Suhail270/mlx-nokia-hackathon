@@ -23,17 +23,52 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
     setInputValue(e.target.value);
   };
 
-  const handleSendMessage = () => {
-    if (inputValue.trim() === '') return;
-
-    // Add the user's message to the messages list
-    const userMessage = { text: inputValue, sender: 'user' };
-    setMessages([...messages, userMessage]);
-
+  const handleSendMessage = async () => {
+    if (inputValue.trim() === "") return; // Don't send empty messages
+  
+    // Add the user's message to the messages array
+    const userMessage = { sender: 'user', text: inputValue };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+  
+    // Prepare the conversation history (excluding the default message)
+    const conversationHistory = messages
+      .filter((msg) => msg.text !== "hi what can I help you with") // Exclude the default message
+      .map((msg) => ({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.text }));
+  
+    // Add the user's current message to the conversation history
+    conversationHistory.push({ role: 'user', content: inputValue });
+  
+    try {
+      // Send the user's message and conversation history to the API
+      const response = await fetch(`http://localhost:8000/api/chat_with_alert/${alert.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: inputValue,
+          conversation_history: conversationHistory,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+  
+      const data = await response.json();
+  
+      // Add the chatbot's response to the messages array
+      const botMessage = { sender: 'chatbot', text: data.answer };
+      setMessages((prevMessages) => [...prevMessages, botMessage]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorMessage = { sender: 'chatbot', text: "Sorry, something went wrong. Please try again." };
+      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+    }
+  
     // Clear the input field
     setInputValue('');
   };
-
 
   return (
     <div className="bg-background w-full mt-5 pl-2 relative">
@@ -157,7 +192,6 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
             <Button variant="ghost" onClick={toggleChatbot} className='text-white bg-black'>X</Button>
           </div>
           <div className="mt-4 flex-1 overflow-y-auto space-y-2">
-            {/* Render all messages */}
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -168,8 +202,8 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
                 <div
                   className={`max-w-[70%] p-3 rounded-lg ${
                     message.sender === 'user'
-                      ? 'bg-blue-500 text-white rounded-br-none' // User message 
-                      : 'bg-gray-100 text-gray-800 rounded-bl-none' // Chatbot message
+                      ? 'bg-blue-500 text-white rounded-br-none'
+                      : 'bg-gray-100 text-gray-800 rounded-bl-none'
                   }`}
                 >
                   {message.text}
