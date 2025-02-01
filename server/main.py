@@ -4,8 +4,8 @@ from db.session import engine, Base
 from models.alert import Alert
 from api import alerts, events, chatbot
 from utils.logging_config import logger
+from api import alerts, events, chatbot, vectorstore, summary
 
-# Create database tables (if not already created)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -18,10 +18,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include our routers under an "/api" prefix
 app.include_router(alerts.router, prefix="/api")
 app.include_router(events.router, prefix="/api")
 app.include_router(chatbot.router, prefix="/api")
+app.include_router(vectorstore.router, prefix="/api")
+app.include_router(summary.router, prefix="/api")
 
 if __name__ == "__main__":
     import uvicorn

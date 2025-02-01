@@ -18,7 +18,6 @@ if not NVIDIA_API_KEY:
 VECTOR_STORE_PATH = os.path.join("results", "vectorstore.pkl")
 vectorstore = None
 
-# Initialize services
 nvidia_embedder = NVIDIAEmbeddings(model="nvidia/nv-embedqa-mistral-7b-v2", api_key=NVIDIA_API_KEY)
 client = ChatNVIDIA(
     model="ibm/granite-3.0-8b-instruct",
@@ -69,9 +68,6 @@ def split_text(text: str):
         raise
 
 def chat_with_document(user_query: str):
-    """
-    Generates an answer based on retrieved document passages.
-    """
     global vectorstore
     logger.info("Starting chat interaction with document.")
     load_vectorstore()
