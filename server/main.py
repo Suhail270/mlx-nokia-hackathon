@@ -1,5 +1,5 @@
 import logging
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 from typing import List
 import os
@@ -9,10 +9,15 @@ import faiss
 from openai import OpenAI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from datetime import datetime
-from server.utils.database import SessionLocal, Alert
+from fastapi.encoders import jsonable_encoder
+
+
+from sqlalchemy import create_engine, Column, String, Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
 
 load_dotenv()
 
@@ -33,11 +38,30 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+# ✅ Connect to SQLite Database
+DATABASE_URL = "sqlite:///./alerts.db"
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+class Alert(Base):
+    __tablename__ = "alerts"
+
+    id = Column(String, primary_key=True, index=True)
+    type = Column(String, index=True)
+    severity = Column(String)
+    location = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    timestamp = Column(String)
+    description = Column(String)
+    image = Column(String)
+
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173","http://localhost:8080"],
+    allow_origins=["http://localhost:5173", "http://localhost:8080"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -68,18 +92,61 @@ class RAGQuery(BaseModel):
     k: int = 5
     top_n: int = 3
 
-# ✅ Dependency: Get Database Session
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-        
-# ✅ API to Retrieve Alerts from SQLite
+
+# ✅ Existing endpoint to get all alerts from the database
 @app.get("/alerts")
 def get_alerts(db: Session = Depends(get_db)):
     return db.query(Alert).all()
+
+# ✅ New function to calculate the midpoint from alerts
+def extract_midpoints_alerts(alerts):
+    """
+    Calculate the geographic midpoint of a list of alerts.
+
+    Args:
+        alerts (list): A list of Alert objects (or dictionaries) expected to have
+                       `latitude` and `longitude` attributes/keys.
+
+    Returns:
+        list: A list containing two floats [mid_latitude, mid_longitude]. If no alerts
+              are provided or valid coordinates are found, returns a default coordinate.
+    """
+    # Default coordinate if no alerts are available
+    if not alerts:
+        return [40.7128, -74.0060]  # Defaults to NYC coordinates
+
+    latitudes = []
+    longitudes = []
+
+    for alert in alerts:
+        # If the alert is a SQLAlchemy model instance with attributes
+        if hasattr(alert, "latitude") and hasattr(alert, "longitude"):
+            latitudes.append(alert.latitude)
+            longitudes.append(alert.longitude)
+        # If the alert is a dictionary
+        elif isinstance(alert, dict):
+            latitudes.append(alert.get("latitude", 0))
+            longitudes.append(alert.get("longitude", 0))
+
+    # In case no valid coordinates were found, return the default
+    if not latitudes or not longitudes:
+        return [40.7128, -74.0060]
+
+    mid_lat = sum(latitudes) / len(latitudes)
+    mid_lon = sum(longitudes) / len(longitudes)
+    return [mid_lat, mid_lon]
+
+@app.get("/alerts_with_midpoint")
+def get_alerts_with_midpoint(db: Session = Depends(get_db)):
+    alerts = db.query(Alert).all()
+    midpoint = extract_midpoints_alerts(alerts)
+    return {"alerts": jsonable_encoder(alerts), "midpoint": midpoint}
 
 @app.post("/ingest")
 def ingest_data(events: List[EventItem]):
@@ -171,4 +238,5 @@ def generate_answer(query: str, passages: list):
     return resp.choices[0].message.content.strip()
 
 if __name__ == "__main__":
+    import uvicorn
     uvicorn.run("main:app", host="localhost", port=8000, reload=True)
