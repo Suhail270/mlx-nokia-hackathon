@@ -3,7 +3,7 @@ import torch
 import gc
 import os
 import ollama
-from server.utils.logging_config import logger
+from utils.logging_config import logger
 
 MODEL_NAME = "qwen2.5:14b-instruct"
 

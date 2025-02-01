@@ -13,10 +13,7 @@ router = APIRouter()
 
 @router.get("/vectorstore/{alert_id}")
 def ensure_vectorstore(alert_id: int, db=Depends(get_db)):
-    """
-    Check if a vector store for the given alert exists.
-    If not, create it from the alert's data.
-    """
+
     vectorstore_path = os.path.join("results", f"vectorstore_{alert_id}.pkl")
     
     if not os.path.exists(vectorstore_path):

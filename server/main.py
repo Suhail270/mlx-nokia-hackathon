@@ -4,7 +4,7 @@ from db.session import engine, Base
 from models.alert import Alert
 from api import alerts, events, chatbot
 from utils.logging_config import logger
-from api import alerts, events, chatbot, vectorstore, summary
+from api import alerts, events, chatbot, vectorstore, summary, video
 
 Base.metadata.create_all(bind=engine)
 
@@ -23,6 +23,8 @@ app.include_router(events.router, prefix="/api")
 app.include_router(chatbot.router, prefix="/api")
 app.include_router(vectorstore.router, prefix="/api")
 app.include_router(summary.router, prefix="/api")
+app.include_router(video.router, prefix="/api")
+
 
 if __name__ == "__main__":
     import uvicorn

@@ -44,4 +44,5 @@ def get_alert_summary(alert_id: int, db=Depends(get_db)):
         raise HTTPException(status_code=500, detail="Error generating summary.")
     
 
-    return {"alert_id": alert_id, "summary": summary}
+    # return {"alert_id": alert_id, "summary": summary}
+    return summary
