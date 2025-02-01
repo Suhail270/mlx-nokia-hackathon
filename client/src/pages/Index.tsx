@@ -64,6 +64,15 @@ const AlertDetailPage = () => {
         console.error("Error sending id to vector store:", err);
       });
 
+    axios
+      .get(`http://127.0.0.1:8000/api/summary/${id}`)
+      .then((res) => {
+        console.log("Summary created:", res.data.message);
+      })
+      .catch((err) => {
+        console.error("Error sending id to summary:", err);
+      });
+
   }, [id]);
 
   const handleBack = () => {
