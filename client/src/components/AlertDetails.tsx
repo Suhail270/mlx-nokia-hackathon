@@ -65,10 +65,8 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
           <div className="flex gap-6 p-5"> 
             <div className="text-white text-sm w-1/3 bg-secondary rounded-lg p-5"> 
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-full
-                  ${alert.severity === 'critical' ? 'bg-red-500/20 text-red-500' :
-                    alert.severity === 'warning' ? 'bg-orange-500/20 text-orange-500' :
-                    'bg-blue-500/20 text-blue-500'}`} >
+                <div className={`p-2 rounded-full          
+                  ${alert.type === 'fire' ? 'bg-red-500/20 text-red-500' : 'bg-orange-500/20 text-orange-500' }`} >
                   <Bell className="w-4 h-4" />
                 </div>
                 

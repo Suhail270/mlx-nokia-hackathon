@@ -91,7 +91,19 @@ const Map = ({ alerts, onAlertSelect, midpoint, centerOffset = 0 }: MapProps) =>
       })();
 
       const icon = L.divIcon({
-        html: `<div class="alert-marker alert-marker-${alert.severity}">${iconHtml}</div>`,
+        html: `<div style="
+      width: 36px;
+      height: 36px;
+      background-color: ${alert.type === 'fire' ? 'rgba(255, 0, 0, 0.7)' 
+        : alert.type === 'assault' ? 'rgba(255, 115, 0, 0.7)' 
+        : 'rgba(0, 0, 255, 0.7)'};
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    ">
+      ${iconHtml}
+    </div>`, //<div class="alert-marker alert-marker-${alert.type}">${iconHtml}</div>
         className: '',
         iconSize: [24, 24],
         iconAnchor: [12, 12]
