@@ -53,6 +53,16 @@ const AlertDetailPage = () => {
         setAlert(res.data);
       })
       .catch((err) => console.error("Error fetching alert details:", err));
+
+    axios
+      .get(`http://127.0.0.1:8000/api/vectorstore/${id}`)
+      .then((res) => {
+        console.log("Vector store is ready:", res.data.message);
+      })
+      .catch((err) => {
+        console.error("Error sending id to vector store:", err);
+      });
+
   }, [id]);
 
   const handleBack = () => {
