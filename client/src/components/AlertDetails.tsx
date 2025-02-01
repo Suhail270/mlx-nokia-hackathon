@@ -32,9 +32,9 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
             viewBox="0 0 24 24" 
             fill="none" 
             stroke="currentColor" 
-            stroke-width="2" 
-            stroke-linecap="round" 
-            stroke-linejoin="round" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
             className="transform scale-150"
           >
             <path d="M18 15h-6v4l-7-7 7-7v4h6v6z"/>
@@ -97,9 +97,24 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
           </div>
 
           {/* Placeholder for Map */}
+          {/* <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[33.5%] w-[93%] overflow-hidden">
+            <Map 
+              alerts={[alert]} 
+              onAlertSelect={() => {}} 
+              midpoint={[alert.latitude, alert.longitude]} 
+            />
+          </div> */}
+
           <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[33.5%] w-[93%] overflow-hidden">
-            <Map alerts={[alert]} onAlertSelect={() => {}} />
+            <Map 
+              alerts={[alert]} 
+              onAlertSelect={() => {}} 
+              midpoint={[alert.latitude, alert.longitude]} 
+              centerOffset={100}
+            />
           </div>
+
+
         </div>
 
         {/* Right Section - Image */}
