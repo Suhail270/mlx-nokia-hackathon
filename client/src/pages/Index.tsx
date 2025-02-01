@@ -15,7 +15,7 @@ const mockAlerts: AlertType[] = [
     longitude: -74.006,
     timestamp: new Date().toISOString(),
     description: 'Large fire detected in residential building. Multiple heat signatures detected. Large fire detected in residential building. Multiple heat signatures detected. Large fire detected in residential building. Multiple heat signatures detected.',
-    image: '@/images/fire.png',
+    image: '/images/fire.png',
   },
   {
     id: '2',
@@ -26,7 +26,7 @@ const mockAlerts: AlertType[] = [
     longitude: -73.9765,
     timestamp: new Date().toISOString(),
     description: 'Potential assault detected in parking garage. Two individuals involved.',
-    image: '@/images/fire.png',
+    image: '/images/fire.png',
   },
 ];
 
@@ -42,7 +42,7 @@ const Index = () => {
   };
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-background text-foreground">
+    <div className="h-screen w-full overflow-hidden bg-background text-foreground">
       {selectedAlert ? (
         // Show AlertDetails if an alert is selected
         <AlertDetails alert={selectedAlert} onBack={handleBack} />
@@ -50,7 +50,7 @@ const Index = () => {
         // Show Map and Alert List when no alert is selected
         <>
           <div className="pl-80 pr-0">
-            <div className="p-6">
+            <div className="p-6 h-screen">
               <Map alerts={mockAlerts} onAlertSelect={handleAlertSelect} />
             </div>
           </div>

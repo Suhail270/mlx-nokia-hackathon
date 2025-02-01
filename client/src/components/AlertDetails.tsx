@@ -88,7 +88,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
           </div>
 
           {/* Alert Details */}
-          <div className="text-white text-sm bg-secondary rounded-lg mt-2 mx-5 p-5 h-[30%]"> 
+          <div className="text-white text-sm bg-secondary rounded-lg mt-2 mx-5 p-5 pt-3 h-[30%]"> 
             <div className="flex items-center gap-2 mb-4">
               <Clock className="w-5 h-5" />
               <h3 className="text-lg font-semibold">Details</h3>
@@ -97,7 +97,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
           </div>
 
           {/* Placeholder for Map */}
-          <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[30%] w-[93%] overflow-hidden">
+          <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[33.5%] w-[93%] overflow-hidden">
             <Map alerts={[alert]} onAlertSelect={() => {}} />
           </div>
         </div>
