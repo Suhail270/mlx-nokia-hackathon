@@ -16,7 +16,6 @@ LLM_MODEL = "meta/llama-3.1-70b-instruct"
 embedding_client = OpenAI(api_key=NVIDIA_API_KEY, base_url="https://integrate.api.nvidia.com/v1")
 llm_client = OpenAI(api_key=NVIDIA_API_KEY, base_url="https://integrate.api.nvidia.com/v1")
 
-# Global FAISS state
 faiss_index = None
 doc_map = {}
 next_id = 0
@@ -80,14 +79,17 @@ def rerank_passages(query, passages):
     rankings.sort(key=lambda x: x["score"], reverse=True)
     return rankings
 
-def generate_answer(query, passages):
-    context = "\n\n".join(passages)
-    system_prompt = (f"You are an AI security event analysis assistant. You have the following event data:\n\n"
-                     f"{context}\n\nAnswer the user's query based on this data. If unsure, say 'I don't know'.")
-    messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": query}
-    ]
+def generate_answer(query, passages, messages=None):
+    if messages is None:
+        context = "\n\n".join(passages)
+        system_prompt = (
+            f"You are an AI security event analysis assistant. You have the following event data:\n\n{context}\n\n"
+            "Answer the user's query based on this data. If unsure, say 'I don't know'."
+        )
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": query}
+        ]
     resp = llm_client.chat.completions.create(
         model=LLM_MODEL,
         messages=messages,
@@ -95,6 +97,7 @@ def generate_answer(query, passages):
         temperature=0.2
     )
     return resp.choices[0].message.content.strip()
+
 
 def rag_query(query, k=5, top_n=3):
     if faiss_index is None:
