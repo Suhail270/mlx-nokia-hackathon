@@ -36,8 +36,8 @@ const AlertPanel = ({ alert, onClose }: AlertPanelProps) => {
         <div>
           <h3 className="text-sm font-medium text-muted-foreground mb-2">Status</h3>
           <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-            ${alert.severity === 'critical' ? 'bg-red-500/20 text-red-500' :
-              alert.severity === 'warning' ? 'bg-orange-500/20 text-orange-500' :
+            ${alert.type === 'fire' ? 'bg-red-500/20 text-red-500' :
+              alert.type === 'assault' ? 'bg-orange-500/20 text-orange-500' :
                 'bg-blue-500/20 text-blue-500'
             }`}>
             {alert.severity.charAt(0).toUpperCase() + alert.severity.slice(1)}
