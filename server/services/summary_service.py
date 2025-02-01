@@ -1,8 +1,9 @@
-import ollama
 import json
 import torch
 import gc
-import logging
+import os
+import ollama
+from server.utils.logging_config import logger
 
 MODEL_NAME = "qwen2.5:14b-instruct"
 
@@ -19,39 +20,27 @@ Do not include bullet points or lists.
 {meetings}
 """
 
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler("logs/sessions.log"),  # Log to sessions.log in the logs folder
-        logging.StreamHandler()  # Also log to console
-    ]
-)
-logger = logging.getLogger(__name__)
-
 def clear_memory():
     """Clear GPU and system RAM."""
     logger.info("Clearing memory...")
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
         torch.cuda.ipc_collect()
-    
     gc.collect()
     logger.info("Memory cleared.")
 
-def process_transcript(input_json):
-    logger.info(f"Processing transcript from {input_json}...")
+def process_transcript(input_json_path):
+    logger.info(f"Processing transcript from {input_json_path}...")
     try:
-        with open(f"{input_json}", 'r') as file:
+        with open(input_json_path, 'r') as file:
             data = json.load(file)
         
         merged_transcription = []
         previous_entry = None
 
-        for entry in data["transcription"]:
+        for entry in data.get("transcription", []):
             entry.pop("timestamp", None)
-            if previous_entry and previous_entry["speaker"] ==  entry["speaker"]:
+            if previous_entry and previous_entry.get("speaker") == entry.get("speaker"):
                 previous_entry["text"] += " " + entry["text"]
             else:
                 if previous_entry:
@@ -63,23 +52,22 @@ def process_transcript(input_json):
 
         data["transcription"] = merged_transcription
 
+        os.makedirs("results", exist_ok=True)
         with open('results/output.json', 'w') as file:
             json.dump(data, file, indent=4)
         logger.info("Transcript processed and saved to results/output.json.")
-
     except Exception as e:
         logger.error(f"Error processing transcript: {str(e)}")
 
-def chunk_transcript(transcript='results/output.json', chunk_size=20000, overlap=3000):
-    logger.info(f"Chunking transcript from {transcript}...")
+def chunk_transcript(transcript_path='results/output.json', chunk_size=20000, overlap=3000):
+    logger.info(f"Chunking transcript from {transcript_path}...")
     try:
-        with open(f"{transcript}", 'r') as file:
+        with open(transcript_path, 'r') as file:
             transcript = str(json.load(file))
 
         chunks = []
         start = 0
         n = len(transcript)
-
         while start < n:
             end = min(start + chunk_size, n)
             chunks.append(transcript[start:end])
@@ -89,7 +77,6 @@ def chunk_transcript(transcript='results/output.json', chunk_size=20000, overlap
         
         logger.info(f"Transcript chunked into {len(chunks)} parts.")
         return chunks
-
     except Exception as e:
         logger.error(f"Error chunking transcript: {str(e)}")
         return []
@@ -133,6 +120,7 @@ def merge_summaries(summaries):
         )
         merged_summary = merged_response['message']['content']
 
+        os.makedirs("results", exist_ok=True)
         with open("results/OverallSummary.md", "w", encoding="utf-8") as md_file:
             md_file.write(f"# Overall Meeting Summary\n\n{merged_summary}")
         
@@ -140,5 +128,6 @@ def merge_summaries(summaries):
         return "Overall Summary Saved"
     except Exception as e:
         logger.error(f"Error merging summaries: {str(e)}")
-
-    clear_memory()
+        return None
+    finally:
+        clear_memory()

@@ -1,39 +1,25 @@
 import os
 import pickle
+import re
+from dotenv import load_dotenv
+from fastapi import HTTPException
 from langchain_nvidia_ai_endpoints import NVIDIAEmbeddings, ChatNVIDIA
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from PyPDF2 import PdfReader
-from dotenv import load_dotenv
-from fastapi import HTTPException
-import re
-import logging
+from utils.logging_config import logger
 
-# Set up logging to both console and file
-os.makedirs("logs", exist_ok=True)  # Ensure logs directory exists
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler("logs/sessions.log"),  # Log to sessions.log in the logs folder
-        logging.StreamHandler()  # Also log to console
-    ]
-)
-logger = logging.getLogger(__name__)
-
-# Load environment variables
 load_dotenv()
 
 NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
 if not NVIDIA_API_KEY:
     logger.error("NVIDIA API Key is missing. Please set it in the environment variables.")
-    raise ValueError("NVIDIA API Key is missing. Please set it in the environment variables.")
+    raise ValueError("NVIDIA API Key is missing.")
 
 VECTOR_STORE_PATH = os.path.join("results", "vectorstore.pkl")
-
 vectorstore = None
 
+# Initialize services
 nvidia_embedder = NVIDIAEmbeddings(model="nvidia/nv-embedqa-mistral-7b-v2", api_key=NVIDIA_API_KEY)
-
 client = ChatNVIDIA(
     model="ibm/granite-3.0-8b-instruct",
     api_key=NVIDIA_API_KEY,
@@ -82,10 +68,12 @@ def split_text(text: str):
         logger.error(f"Error splitting text: {e}")
         raise
 
-def chat_with_document(user_input: str):
+def chat_with_document(user_query: str):
+    """
+    Generates an answer based on retrieved document passages.
+    """
     global vectorstore
     logger.info("Starting chat interaction with document.")
-    user_query = user_input.user_input
     load_vectorstore()
     
     if not vectorstore:
@@ -109,26 +97,15 @@ def chat_with_document(user_input: str):
 
     messages = [
         {"role": "user", "content": f"""
-        You are an advanced virtual assistant specializing in answering user queries using information extracted from a FAISS index of meeting transcripts. Your goals are to be accurate, relevant, and helpful in every interaction. Follow these rules to ensure exceptional responses:
+You are an advanced virtual assistant that uses information extracted from FAISS‑indexed transcripts to answer queries. Please follow these guidelines:
+  
+- Extract precise and relevant information only from the transcripts.
+- Provide a clear, concise, and direct answer.
+- If available, include a relevant timestamp (e.g. [00:12:34]) from the transcript.
+- If no relevant data is found, respond honestly that no matching information exists.
 
-        ### Key Responsibilities:
-        1. Extract precise and relevant information solely from the FAISS-indexed transcripts.
-        2. Provide responses that are clear, concise, and directly answer the user's question.
-        3. Whenever applicable, include the relevant timestamp from the transcript to add credibility and context.
-
-        ### Interaction Guidelines:
-        - **For Greetings:** Respond warmly and politely to greetings (e.g., "Hi," "Hello," "Hey") without referencing the transcript.
-        - **For Transcript-Based Queries:** Provide answers directly related to the user's query without using phrases like "Based on the provided transcript" or "According to stored data."
-        - **For Unavailable Information:** If the FAISS index does not contain relevant information, respond honestly and courteously, letting the user know that no data matches their query.
-        - **Tone:** Maintain a professional yet friendly tone in every response.
-
-        ### Response Format:
-        - Address the user's query directly, focusing on clarity and relevance.
-        - If applicable, include the timestamp (e.g., [00:12:34]) from the transcript to support your answer.
-        - Avoid unnecessary details or redundant explanations.
-
-        Context: {context}
-        Question: {user_query}
+Context: {context}
+Question: {user_query}
         """}
     ]
 
@@ -139,7 +116,7 @@ def chat_with_document(user_input: str):
                 final_response += chunk.content
         cleaned_response = re.sub(r"(\*\*|###|[\w-]+\.pdf)", "", final_response)
         logger.info("Chat response generated successfully.")
-        return {"response": cleaned_response.strip()}
+        return cleaned_response.strip()
     except Exception as e:
         logger.error(f"Error generating chat response: {e}")
         raise HTTPException(status_code=500, detail="An error occurred while generating the response.")
