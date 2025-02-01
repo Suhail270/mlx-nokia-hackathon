@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';  
 import Map from '@/components/Map';
+import axios from 'axios';
 import AlertList from '@/components/AlertList';
 import AlertDetails from '@/components/AlertDetails';
 import { AlertType } from '@/types/alerts';
@@ -31,7 +32,15 @@ const mockAlerts: AlertType[] = [
 ];
 
 const Index = () => {
+  const [alerts, setAlerts] = useState<AlertType[]>([]);
   const [selectedAlert, setSelectedAlert] = useState<AlertType | null>(null);
+
+  // ✅ Fetch Alerts from FastAPI (SQLite)
+  useEffect(() => {
+    axios.get("http://127.0.0.1:8000/alerts")
+      .then(res => setAlerts(res.data))
+      .catch(err => console.error("Error fetching alerts:", err));
+  }, []);
 
   const handleAlertSelect = (alert: AlertType) => {
     setSelectedAlert(alert);
@@ -50,11 +59,11 @@ const Index = () => {
         // Show Map and Alert List when no alert is selected
         <>
           <div className="pl-80 pr-0">
-            <div className="p-6 h-screen">
-              <Map alerts={mockAlerts} onAlertSelect={handleAlertSelect} />
+            <div className="p-6">
+              <Map alerts={alerts} onAlertSelect={handleAlertSelect} />
             </div>
           </div>
-          <AlertList alerts={mockAlerts} onAlertSelect={handleAlertSelect} />
+          <AlertList alerts={alerts} onAlertSelect={handleAlertSelect} />
         </>
       )}
     </div>

@@ -9,6 +9,10 @@ import faiss
 from openai import OpenAI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+from datetime import datetime
+from database import SessionLocal, Alert
 
 load_dotenv()
 
@@ -30,7 +34,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173","http://localhost:8080"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -61,6 +65,111 @@ class RAGQuery(BaseModel):
     query: str
     k: int = 5
     top_n: int = 3
+
+# ✅ Dependency: Get Database Session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# ✅ Mock Alerts Data
+mock_alerts = [
+    {
+        "id": "1",
+        "type": "fire",
+        "severity": "critical",
+        "location": "123 Main St, New York, NY",
+        "latitude": 40.7128,
+        "longitude": -74.006,
+        "timestamp": datetime.utcnow().isoformat(),
+        "description": "Large fire detected in residential building. Multiple heat signatures detected.",
+        "image": '@/images/fire.png',
+    },
+    {
+        "id": "2",
+        "type": "fire",
+        "severity": "warning",
+        "location": "456 Park Ave, New York, NY",
+        "latitude": 40.7528,
+        "longitude": -73.9765,
+        "timestamp": datetime.utcnow().isoformat(),
+        "description": "Potential assault detected in parking garage. Two individuals involved.",
+        "image": '@/images/fire.png',
+    },
+    {
+        "id": "3",
+        "type": "assault",
+        "severity": "critical",
+        "location": "789 River Rd, Miami, FL",
+        "latitude": 25.7617,
+        "longitude": -80.1918,
+        "timestamp": datetime.utcnow().isoformat(),
+        "description": "Severe flooding detected near residential areas. Rising water levels due to heavy rainfall.",
+        "image": '@/images/fire.png',
+    },
+    {
+        "id": "4",
+        "type": "assault",
+        "severity": "critical",
+        "location": "102 Elm St, Los Angeles, CA",
+        "latitude": 34.0522,
+        "longitude": -118.2437,
+        "timestamp": datetime.utcnow().isoformat(),
+        "description": "Earthquake detected with magnitude 6.2. Possible structural damage reported.",
+        "image": '@/images/fire.png',
+    },
+    {
+        "id": "5",
+        "type": "fire",
+        "severity": "warning",
+        "location": "555 Lincoln Blvd, San Francisco, CA",
+        "latitude": 37.7749,
+        "longitude": -122.4194,
+        "timestamp": datetime.utcnow().isoformat(),
+        "description": "Suspicious activity detected at a closed business. Potential burglary in progress.",
+        "image": '@/images/fire.png',
+    },
+    {
+        "id": "6",
+        "type": "fire",
+        "severity": "critical",
+        "location": "222 Oak St, Chicago, IL",
+        "latitude": 41.8781,
+        "longitude": -87.6298,
+        "timestamp": datetime.utcnow().isoformat(),
+        "description": "High levels of gas detected in the area. Evacuation may be required.",
+        "image": '@/images/fire.png',
+    },
+    {
+        "id": "7",
+        "type": "assault",
+        "severity": "high",
+        "location": "777 Maple Ave, Houston, TX",
+        "latitude": 29.7604,
+        "longitude": -95.3698,
+        "timestamp": datetime.utcnow().isoformat(),
+        "description": "Person collapsed in a public area. CPR being performed by a bystander.",
+        "image" : '@/images/fire.png',
+    },
+]
+
+# ✅ API to Insert Mock Alerts into SQLite
+@app.post("/populate-alerts")
+def populate_alerts(db: Session = Depends(get_db)):
+    for alert in mock_alerts:
+        existing_alert = db.query(Alert).filter(Alert.id == alert["id"]).first()
+        if not existing_alert:
+            new_alert = Alert(**alert)
+            db.add(new_alert)
+    db.commit()
+    return {"message": "Mock alerts added to database"}
+
+# ✅ API to Retrieve Alerts from SQLite
+@app.get("/alerts")
+def get_alerts(db: Session = Depends(get_db)):
+    return db.query(Alert).all()
 
 @app.post("/ingest")
 def ingest_data(events: List[EventItem]):
