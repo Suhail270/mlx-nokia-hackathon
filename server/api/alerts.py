@@ -8,7 +8,7 @@ router = APIRouter()
 
 def extract_midpoints_alerts(alerts):
     if not alerts:
-        return [40.7128, -74.0060]  # Default coordinate (e.g., NYC)
+        return [40.7128, -74.0060]
     latitudes = [alert.latitude for alert in alerts]
     longitudes = [alert.longitude for alert in alerts]
     mid_lat = sum(latitudes) / len(latitudes)
