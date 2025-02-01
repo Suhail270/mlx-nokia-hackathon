@@ -9,9 +9,29 @@ import Image from 'next/image';
 const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void }) => {
   const [chatbotVisible, setChatbotVisible] = useState(false);
   const [isResolved, setIsResolved] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [messages, setMessages] = useState([
+    { text: 'Hi, how can I help you?', sender: 'chatbot' }, 
+  ]);
+
 
   const toggleChatbot = () => {
     setChatbotVisible(!chatbotVisible);
+  };
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleSendMessage = () => {
+    if (inputValue.trim() === '') return;
+
+    // Add the user's message to the messages list
+    const userMessage = { text: inputValue, sender: 'user' };
+    setMessages([...messages, userMessage]);
+
+    // Clear the input field
+    setInputValue('');
   };
 
 
@@ -136,8 +156,41 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
             <h3 className="text-lg font-semibold">Chatbot</h3>
             <Button variant="ghost" onClick={toggleChatbot} className='text-white bg-black'>X</Button>
           </div>
-          <div className="mt-4">
-            {/* You can add actual chatbot content here */}
+          <div className="mt-4 flex-1 overflow-y-auto space-y-2">
+            {/* Render all messages */}
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex ${
+                  message.sender === 'user' ? 'justify-end' : 'justify-start'
+                }`}
+              >
+                <div
+                  className={`max-w-[70%] p-3 rounded-lg ${
+                    message.sender === 'user'
+                      ? 'bg-blue-500 text-white rounded-br-none' // User message 
+                      : 'bg-gray-100 text-gray-800 rounded-bl-none' // Chatbot message
+                  }`}
+                >
+                  {message.text}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 flex">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              className="flex-1 p-2 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              placeholder="Type a message..."
+            />
+            <Button
+              onClick={handleSendMessage}
+              className="bg-blue-500 text-white rounded-r hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Send
+            </Button>
           </div>
         </div>
       )}
