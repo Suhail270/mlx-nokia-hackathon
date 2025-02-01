@@ -16,7 +16,7 @@ const Map = ({ alerts, onAlertSelect }: MapProps) => {
   useEffect(() => {
     if (!mapContainer.current || mapInstance.current) return;
 
-    mapInstance.current = L.map(mapContainer.current).setView([40, -74.5], 9);
+    mapInstance.current = L.map(mapContainer.current).setView([40.7128, -74.006], 9);
     
     // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
