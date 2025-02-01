@@ -91,7 +91,7 @@ const Map = ({ alerts, onAlertSelect, midpoint, centerOffset = 0 }: MapProps) =>
       })();
 
       const icon = L.divIcon({
-        html: `<div class="alert-marker alert-marker-${alert.severity}">${iconHtml}</div>`,
+        html: `<div class="alert-marker alert-marker-${alert.type}">${iconHtml}</div>`,
         className: '',
         iconSize: [24, 24],
         iconAnchor: [12, 12]
