@@ -9,8 +9,15 @@ import faiss
 from openai import OpenAI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+from datetime import datetime
+from server.utils.database import SessionLocal, Alert
 
 load_dotenv()
+
+NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
+ROBOFLOW_API_KEY = os.getenv("ROBOFLOW_API_KEY")
 
 if not os.path.exists('logs'):
     os.makedirs('logs')
@@ -30,13 +37,12 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173","http://localhost:8080"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY", "YOUR_NVIDIA_API_KEY")
 EMBED_MODEL = "nvidia/llama-3.2-nv-embedqa-1b-v2"
 RERANK_MODEL = "nvidia/llama-3.2-nv-rerankqa-1b-v2"
 LLM_MODEL = "meta/llama-3.1-70b-instruct"
@@ -61,6 +67,19 @@ class RAGQuery(BaseModel):
     query: str
     k: int = 5
     top_n: int = 3
+
+# ✅ Dependency: Get Database Session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+        
+# ✅ API to Retrieve Alerts from SQLite
+@app.get("/alerts")
+def get_alerts(db: Session = Depends(get_db)):
+    return db.query(Alert).all()
 
 @app.post("/ingest")
 def ingest_data(events: List[EventItem]):
