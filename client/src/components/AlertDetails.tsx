@@ -68,6 +68,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
   
     // Clear the input field
     setInputValue('');
+  
   };
 
   return (
