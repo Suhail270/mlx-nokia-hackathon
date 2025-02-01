@@ -70,6 +70,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
   
     // Clear the input field
     setInputValue('');
+  
   };
 
 
@@ -175,7 +176,11 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
         <script>console.log('Video Path:', alert.video_path);</script>
         {/* Right Section - Image */}
         <div className="text-white w-1/2 bg-secondary rounded-lg mb-14 mt-5 mr-10 p-7 h-[88%]">
-          <img src={alert.image}></img>
+          <video controls className='h-full w-full'>
+            {/* <source src={`/${alert.video_path.split('/').pop()}`} type="video/mp4" /> */}
+            <source src="/2min.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         </div>
         {/* Right Section - Video
         <div className="text-white w-1/2 bg-secondary rounded-lg mb-14 mt-5 mr-10 p-7 h-[88%]">
