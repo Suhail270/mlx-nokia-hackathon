@@ -38,7 +38,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
   return (
     <div className="bg-background w-full mt-5 pl-2 relative">
 
-<div className="flex items-center justify-between ml-4">
+    <div className="flex items-center justify-between ml-4">
         {/* Back button */}
         <Button 
           variant="ghost" 
@@ -151,7 +151,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
 
       {/* Chatbot Popup */}
       {chatbotVisible && (
-        <div className="fixed bottom-12 right-16 w-80 h-96 bg-white shadow-lg rounded-t-lg p-5 rounded-lg">
+        <div className="fixed bottom-12 right-16 w-80 h-96 bg-white shadow-lg rounded-t-lg p-5 rounded-lg flex flex-col">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Chatbot</h3>
             <Button variant="ghost" onClick={toggleChatbot} className='text-white bg-black'>X</Button>
@@ -177,7 +177,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
               </div>
             ))}
           </div>
-          <div className="mt-4 flex">
+          <div className="mt-4 flex relative">
             <input
               type="text"
               value={inputValue}
