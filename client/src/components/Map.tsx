@@ -7,9 +7,10 @@ interface MapProps {
   alerts: AlertType[];
   onAlertSelect: (alert: AlertType) => void;
   midpoint?: [number, number];
+  centerOffset?: number; // New optional prop for vertical offset in pixels
 }
 
-const Map = ({ alerts, onAlertSelect, midpoint }: MapProps) => {
+const Map = ({ alerts, onAlertSelect, midpoint, centerOffset = 0 }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<L.Map | null>(null);
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
@@ -40,12 +41,19 @@ const Map = ({ alerts, onAlertSelect, midpoint }: MapProps) => {
     };
   }, []); // run only once on mount
 
-  // Update the map view if the midpoint changes
+  // Update the map view if the midpoint (or offset) changes
   useEffect(() => {
     if (mapInstance.current && midpoint) {
-      mapInstance.current.setView(midpoint, mapInstance.current.getZoom());
+      // Convert the midpoint to pixel coordinates
+      const containerPoint = mapInstance.current.latLngToContainerPoint(midpoint);
+      // Instead of subtracting, add the offset to move the center down.
+      const adjustedPoint = L.point(containerPoint.x, containerPoint.y + centerOffset);
+      // Convert back to geographical coordinates
+      const adjustedLatLng = mapInstance.current.containerPointToLatLng(adjustedPoint);
+      mapInstance.current.setView(adjustedLatLng, mapInstance.current.getZoom());
     }
-  }, [midpoint]);
+  }, [midpoint, centerOffset]);
+  
 
   // Update markers whenever alerts or onAlertSelect changes
   useEffect(() => {

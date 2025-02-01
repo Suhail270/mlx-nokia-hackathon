@@ -135,8 +135,8 @@ def extract_midpoints_alerts(alerts):
             longitudes.append(alert.get("longitude", 0))
 
     # In case no valid coordinates were found, return the default
-    if not latitudes or not longitudes:
-        return [40.7128, -74.0060]
+    # if not latitudes or not longitudes:
+    #     return [40.7128, -74.0060]
 
     mid_lat = sum(latitudes) / len(latitudes)
     mid_lon = sum(longitudes) / len(longitudes)

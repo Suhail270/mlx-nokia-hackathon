@@ -97,9 +97,24 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
           </div>
 
           {/* Placeholder for Map */}
+          {/* <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[33.5%] w-[93%] overflow-hidden">
+            <Map 
+              alerts={[alert]} 
+              onAlertSelect={() => {}} 
+              midpoint={[alert.latitude, alert.longitude]} 
+            />
+          </div> */}
+
           <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[33.5%] w-[93%] overflow-hidden">
-            <Map alerts={[alert]} onAlertSelect={() => {}} />
+            <Map 
+              alerts={[alert]} 
+              onAlertSelect={() => {}} 
+              midpoint={[alert.latitude, alert.longitude]} 
+              centerOffset={150}
+            />
           </div>
+
+
         </div>
 
         {/* Right Section - Image */}
