@@ -131,7 +131,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
 
       {/* Chatbot Popup */}
       {chatbotVisible && (
-        <div className="fixed bottom-6 right-14 w-80 h-96 bg-white shadow-lg rounded-t-lg p-5 rounded-lg">
+        <div className="fixed bottom-12 right-16 w-80 h-96 bg-white shadow-lg rounded-t-lg p-5 rounded-lg">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Chatbot</h3>
             <Button variant="ghost" onClick={toggleChatbot} className='text-white bg-black'>X</Button>
