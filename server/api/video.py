@@ -12,7 +12,7 @@ load_dotenv()
 router = APIRouter()
 
 INVOKE_URL = "https://ai.api.nvidia.com/v1/vlm/nvidia/vila"
-API_KEY = "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"
+API_KEY = "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"
 
 if not API_KEY:
     raise RuntimeError("API_KEY is missing! Set it in your .env file or environment variables.")
@@ -82,8 +82,7 @@ def delete_asset(asset_id: str):
     response = requests.delete(f"{NVCF_ASSET_URL}/{asset_id}", headers=headers, timeout=30)
     response.raise_for_status()
 
-def chat_with_media_vila_local(
-    query: str,
+def video_analysis_cosmos_nemotron(
     file_path: str,
     stream: bool = False,
     max_tokens: int = 1024,
@@ -115,8 +114,10 @@ def chat_with_media_vila_local(
             "NVCF-FUNCTION-ASSET-IDS": asset_seq,
             "Accept": "application/json" if not stream else "text/event-stream",
         }
+
+        prompt = "You are the Chief Security Officer of a large corporation. You have been tasked with analyzing a video feed from a security camera. Provide a detailed analysis of the video feed, including any potential security threats, incidents and number or possible number of people involved with a detailed description of each person."
         
-        messages = [{"role": "user", "content": f"{query} {media_content}"}]
+        messages = [{"role": "user", "content": f"{prompt} {media_content}"}]
         payload = {
             "max_tokens": max_tokens,
             "temperature": temperature,
@@ -135,7 +136,7 @@ def chat_with_media_vila_local(
         else:
             return response.json()
     except Exception as e:
-        logger.error(f"Error in chat_with_media_vila_local: {e}")
+        logger.error(f"Error in video_analysis_cosmos_nemotron: {e}")
         return {"error": str(e)}
     finally:
         for asset_id in asset_list:
@@ -145,7 +146,6 @@ def chat_with_media_vila_local(
                 logger.error(f"Error deleting asset {asset_id}: {del_err}")
 
 class VideoQuery(BaseModel):
-    query: str
     file_path: str
     stream: bool = False
     max_tokens: int = 1024
@@ -154,11 +154,10 @@ class VideoQuery(BaseModel):
     seed: int = 50
     num_frames_per_inference: int = 8
 
-@router.post("/nvidia-vila-local/")
+@router.post("/vlm-gen/")
 def video_text_local(video_query: VideoQuery):
     try:
-        result = chat_with_media_vila_local(
-            query=video_query.query,
+        result = video_analysis_cosmos_nemotron(
             file_path=video_query.file_path,
             stream=video_query.stream,
             max_tokens=video_query.max_tokens,

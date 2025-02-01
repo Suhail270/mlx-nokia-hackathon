@@ -13,3 +13,4 @@ class Alert(Base):
     timestamp = Column(String)
     description = Column(String)
     image = Column(String)
+    video_path = Column(String)
