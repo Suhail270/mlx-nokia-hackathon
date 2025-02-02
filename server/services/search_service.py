@@ -12,6 +12,7 @@ NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
 EMBED_MODEL = "nvidia/llama-3.2-nv-embedqa-1b-v2"
 RERANK_MODEL = "nvidia/llama-3.2-nv-rerankqa-1b-v2"
 LLM_MODEL = "meta/llama-3.1-70b-instruct"
+SUMMARIZER_MODEL = "deepseek-ai/deepseek-r1"
 
 embedding_client = OpenAI(api_key=NVIDIA_API_KEY, base_url="https://integrate.api.nvidia.com/v1")
 llm_client = OpenAI(api_key=NVIDIA_API_KEY, base_url="https://integrate.api.nvidia.com/v1")
