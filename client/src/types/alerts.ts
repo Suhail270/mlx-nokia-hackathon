@@ -8,4 +8,5 @@ export interface AlertType {
   timestamp: string;
   description: string;
   image?: string;
+  video_path: string;
 }

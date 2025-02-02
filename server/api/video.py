@@ -173,7 +173,6 @@ class VideoQuery(BaseModel):
 #         logger.error(f"Error in video_text_local endpoint: {e}")
 #         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
-
 @router.post("/vlm-gen/")
 def video_text_local(video_query: VideoQuery):
     try:
