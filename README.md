@@ -106,10 +106,9 @@ npm run dev
 - **Edge AI Deployment**: Optimize models for deployment on edge devices.
 - **Expanded Threat Detection**: Include additional incidents such as kidnapping, burglary, child predation and sexual assault.
 - **Mobile App Integration**: Provide real-time alerts via mobile applications.
-
-- **Overall system optimization**: Improving real-time detection & accuracy​.
-- **Exapanding source feeds**: UAVs (drones) will be used for real-time fire hazard detection and immediate firefighter deployment.
-- **Response Optimization**: Cluster identification will be used to strategically position fire brigades and police for efficient patrolling and rapid response in high-risk areas.
+- **Overall system optimization**: Improving real-time detection & accuracy​ with smart network solutions and lossless compression modules.
+- **Exapanding source feeds**: UAVs (drones) will be used for real-time fire hazard detection and immediate relief dispatch until human officers arrive on scene.
+- **Response Optimization**: Cluster identification will be used to strategically position fire brigades, police fand ambulances for  efficient patrolling and rapid response in high-risk areas.
 
 ## Contributors
 - **Suhail Ahmed (Team Lead)**
