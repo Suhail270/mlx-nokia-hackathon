@@ -191,7 +191,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
 
       {/* Chatbot Popup */}
       {chatbotVisible && (
-        <div className="fixed bottom-16 right-16 w-[38rem] h-[30rem] bg-background shadow-lg rounded-t-lg p-5 rounded-lg flex flex-col border border-gray-500">
+        <div className="fixed bottom-16 right-16 w-[75%] md:w-[38rem] h-[50%] md:h-[30rem] bg-background shadow-lg rounded-t-lg p-5 rounded-lg flex flex-col border border-gray-500 z-[100]">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold text-white">Chatbot</h3>
             {/* <IoIosCloseCircle size={30} variant="ghost" onClick={toggleChatbot} /> */}
@@ -228,7 +228,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
               type="text"
               value={inputValue}
               onChange={handleInputChange}
-              className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-black w-[60%]"
               placeholder="Type a message..."
             />
             <Button
