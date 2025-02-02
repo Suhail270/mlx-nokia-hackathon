@@ -118,7 +118,7 @@ const Map = ({ alerts, onAlertSelect, midpoint, centerOffset = 0 }: MapProps) =>
   }, [alerts, onAlertSelect]);
 
   return (
-    <div className="relative w-full h-[600px] rounded-lg overflow-hidden border border-border">
+    <div className="relative w-full h-[600px] rounded-lg overflow-hidden border border-border -z-8">
       <div ref={mapContainer} className="absolute inset-0" />
     </div>
   );

@@ -27,7 +27,7 @@ const Index = () => {
 
   return (
     <div className="h-screen w-full overflow-hidden bg-background text-foreground">
-      <div className="pl-80 pr-0">
+      <div className="hidden sm:block pl-80 pr-0">
         <div className="p-6">
           <Map
             alerts={alerts}
