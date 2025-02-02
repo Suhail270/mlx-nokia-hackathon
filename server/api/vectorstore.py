@@ -44,6 +44,7 @@ def ensure_vectorstore(alert_id: int, db=Depends(get_db)):
         os.makedirs("results", exist_ok=True)
         vectorstore_data = {"index": index, "doc_map": doc_map}
         try:
+            print("vectorstore_path", vectorstore_path)
             with open(vectorstore_path, "wb") as f:
                 pickle.dump(vectorstore_data, f)
             logger.info(f"Vector store created and saved at {vectorstore_path}.")

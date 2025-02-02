@@ -3,6 +3,7 @@ from fastapi.encoders import jsonable_encoder
 from db.session import get_db
 from models.alert import Alert
 from utils.logging_config import logger
+from utils.translation import translation_service
 
 router = APIRouter()
 
@@ -16,17 +17,23 @@ def extract_midpoints_alerts(alerts):
     return [mid_lat, mid_lon]
 
 @router.get("/alerts")
-def get_alerts(db=Depends(get_db)):
+def get_alerts(lang: str = 'en', db=Depends(get_db)):
     alerts = db.query(Alert).all()
-    return jsonable_encoder(alerts)
+    data = jsonable_encoder(alerts)
+    return translation_service.translate_list(data, lang)
 
 @router.get("/alerts/{alert_id}")
-def get_alert_details(alert_id:str, db=Depends(get_db)):
+def get_alert_details(alert_id: str, lang: str = 'en', db=Depends(get_db)):
     alert = db.query(Alert).filter(Alert.id == alert_id).first()
-    return jsonable_encoder(alert)
+    data = jsonable_encoder(alert)
+    return translation_service.translate_dict(data, lang)
 
 @router.get("/alerts_with_midpoint")
-def get_alerts_with_midpoint(db=Depends(get_db)):
+def get_alerts_with_midpoint(lang: str = 'en', db=Depends(get_db)):
     alerts = db.query(Alert).all()
     midpoint = extract_midpoints_alerts(alerts)
-    return {"alerts": jsonable_encoder(alerts), "midpoint": midpoint}
+    data = {
+        "alerts": jsonable_encoder(alerts),
+        "midpoint": midpoint
+    }
+    return translation_service.translate_dict(data, lang)

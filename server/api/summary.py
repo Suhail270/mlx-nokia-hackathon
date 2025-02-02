@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from db.session import get_db
 from models.alert import Alert
 from utils.logging_config import logger
+from utils.translation import translation_service
 from services.search_service import llm_client, LLM_MODEL, SUMMARIZER_MODEL
 from api.video import video_text_local
 from pydantic import BaseModel
@@ -81,7 +82,7 @@ def call_vlm_model(alert_id: int, db=Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Error processing video: {str(e)}")
 
 @router.get("/summary/{alert_id}")
-def get_alert_summary(alert_id: int, db=Depends(get_db)):
+def get_alert_summary(alert_id: int, lang: str = 'en', db=Depends(get_db)):
     alert = db.query(Alert).filter(Alert.id == str(alert_id)).first()
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found.")
@@ -129,4 +130,8 @@ def get_alert_summary(alert_id: int, db=Depends(get_db)):
         logger.error(f"Error generating summary: {e}")
         raise HTTPException(status_code=500, detail="Error generating summary.")
     
-    return {"alert_id": alert_id, "summary": processed_summary}
+    response_data = {
+        "alert_id": alert_id,
+        "summary": processed_summary
+    }
+    return translation_service.translate_dict(response_data, lang)
