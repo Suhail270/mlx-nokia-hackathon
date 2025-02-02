@@ -162,7 +162,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
           </div>
 
           {/* Map */}
-          <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[12%] md:h-[33.5%] w-[90%] overflow-hidden">
+          <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[12%] md:h-[33.5%] w-[93%] overflow-hidden">
             <Map 
               alerts={[alert]} 
               onAlertSelect={() => {}} 
