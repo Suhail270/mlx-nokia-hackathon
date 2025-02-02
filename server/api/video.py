@@ -9,13 +9,14 @@ from utils.logging_config import logger
 
 load_dotenv()
 
+NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
+
 router = APIRouter()
 
 INVOKE_URL = "https://ai.api.nvidia.com/v1/vlm/nvidia/vila"
-API_KEY = "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"
 
-if not API_KEY:
-    raise RuntimeError("API_KEY is missing! Set it in your .env file or environment variables.")
+if not NVIDIA_API_KEY:
+    raise RuntimeError("NVIDIA_API_KEY is missing! Set it in your .env file or environment variables.")
 
 NVCF_ASSET_URL = "https://api.nvcf.nvidia.com/v2/nvcf/assets"
 SUPPORTED_LIST = {
@@ -42,7 +43,7 @@ def upload_asset_from_local(file_path: str, description: str) -> str:
         raise ValueError(f"Unsupported file format: {ext}")
     
     headers = {
-        "Authorization": f"Bearer {API_KEY}",
+        "Authorization": f"Bearer {NVIDIA_API_KEY}",
         "Content-Type": "application/json",
         "Accept": "application/json",
     }
@@ -78,7 +79,7 @@ def upload_asset_from_local(file_path: str, description: str) -> str:
     return asset_id
 
 def delete_asset(asset_id: str):
-    headers = {"Authorization": f"Bearer {API_KEY}"}
+    headers = {"Authorization": f"Bearer {NVIDIA_API_KEY}"}
     response = requests.delete(f"{NVCF_ASSET_URL}/{asset_id}", headers=headers, timeout=30)
     response.raise_for_status()
 
@@ -90,6 +91,7 @@ def video_analysis_cosmos_nemotron(
     top_p: float = 0.7,
     seed: int = 50,
     num_frames_per_inference: int = 8,
+    prompt: str = "Analyze the video and provide a summary.",
 ):
     asset_list = []
     media_content = ""
@@ -108,14 +110,12 @@ def video_analysis_cosmos_nemotron(
         
         asset_seq = ",".join(asset_list)
         headers = {
-            "Authorization": f"Bearer {API_KEY}",
+            "Authorization": f"Bearer {NVIDIA_API_KEY}",
             "Content-Type": "application/json",
             "NVCF-INPUT-ASSET-REFERENCES": asset_seq,
             "NVCF-FUNCTION-ASSET-IDS": asset_seq,
             "Accept": "application/json" if not stream else "text/event-stream",
         }
-
-        prompt = "You are the Chief Security Officer of a large corporation. You have been tasked with analyzing a video feed from a security camera. Provide a detailed analysis of the video feed, including any potential security threats, incidents and number or possible number of people involved with a detailed description of each person."
         
         messages = [{"role": "user", "content": f"{prompt} {media_content}"}]
         payload = {
@@ -153,6 +153,25 @@ class VideoQuery(BaseModel):
     top_p: float = 0.7
     seed: int = 50
     num_frames_per_inference: int = 8
+    prompt: str = "Analyze the video and provide a summary."
+
+# @router.post("/vlm-gen/")
+# def video_text_local(video_query: VideoQuery):
+#     try:
+#         result = video_analysis_cosmos_nemotron(
+#             file_path=video_query.file_path,
+#             stream=video_query.stream,
+#             max_tokens=video_query.max_tokens,
+#             temperature=video_query.temperature,
+#             top_p=video_query.top_p,
+#             seed=video_query.seed,
+#             num_frames_per_inference=video_query.num_frames_per_inference,
+#             prompt=video_query.prompt
+#         )
+#         return JSONResponse(content=result)
+#     except Exception as e:
+#         logger.error(f"Error in video_text_local endpoint: {e}")
+#         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 @router.post("/vlm-gen/")
 def video_text_local(video_query: VideoQuery):
@@ -165,8 +184,10 @@ def video_text_local(video_query: VideoQuery):
             top_p=video_query.top_p,
             seed=video_query.seed,
             num_frames_per_inference=video_query.num_frames_per_inference,
+            prompt=video_query.prompt
         )
-        return JSONResponse(content=result)
+        # Return the raw result instead of wrapping it in JSONResponse
+        return result
     except Exception as e:
         logger.error(f"Error in video_text_local endpoint: {e}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
