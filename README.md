@@ -71,6 +71,22 @@ Our AI-Powered Surveillance System is an advanced security dashboard designed to
 - Python 3.8+
 - Node.js 16+
 
+### Environment Variables
+- Create .env files in client and server directories
+- For NVIDIA API Key
+   - Visit 'https://build.nvidia.com/explore/discover' 
+   - Click on DeepSeek R1 model.
+   - Create an account.
+   - Click on _Build with NIM_.
+   - Chose self hosting.
+   - Click on generate API key.
+   - Copy API KEY and place it in .env file under server directory.
+- For RoboFlow
+   - Visit 'https://roboflow.com/'.
+   - Sign up
+   - Under settings click on API keys.
+   - Copy API keys and place it in the env file under server directory.
+
 ### Backend Setup
 ```bash
 # Clone the repository
@@ -109,11 +125,12 @@ npm run dev
 - **Overall system optimization**: Improving real-time detection & accuracy​ with smart network solutions and lossless compression modules.
 - **Exapanding source feeds**: UAVs (drones) will be used for real-time fire hazard detection and immediate relief dispatch until human officers arrive on scene.
 - **Response Optimization**: Cluster identification will be used to strategically position fire brigades, police fand ambulances for  efficient patrolling and rapid response in high-risk areas.
-
 ## Contributors
 - **Suhail Ahmed (Team Lead)**
 - **Archisa Kar** 
 - **Asmitha Krishnakumar**
 - **Mohamed Tahir**
 - **Mujtaba Mohimtulay**
+
+
 
