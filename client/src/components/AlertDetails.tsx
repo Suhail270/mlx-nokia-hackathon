@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AlertType } from '@/types/alerts';
 import { ChevronLeft, Bell, MapPin, Clock, MessageSquare, ArrowBigLeft, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,9 +13,28 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
   const [isResolved, setIsResolved] = useState(false);
   const [isArabic, setIsArabic] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [summary, setSummary] = useState('');
   const [messages, setMessages] = useState([
     { text: 'Hi, how can I help you?', sender: 'chatbot' }, 
   ]);
+
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/summary/${alert.id}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setSummary(data.summary); // Assuming the API returns an object with a 'summary' field
+      } catch (error) {
+        console.error('Error fetching summary:', error);
+        setSummary('Failed to load summary.');
+      }
+    };
+
+    fetchSummary();
+  }, [alert.id]);
 
 
   const toggleChatbot = () => {
@@ -151,7 +170,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
               <Clock className="w-5 h-5" />
               <h3 className="text-lg font-semibold">Details</h3>
             </div>
-            <p className="text-muted-foreground">{alert.description}</p>
+            <p className="text-muted-foreground">{summary}</p>
           </div>
 
           {/* Video (Mobile View) */}
