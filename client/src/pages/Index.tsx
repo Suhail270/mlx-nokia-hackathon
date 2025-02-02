@@ -9,6 +9,7 @@ import { AlertType } from '@/types/alerts';
 const Index = () => {
   const [alerts, setAlerts] = useState<AlertType[]>([]);
   const [midpoint, setMidpoint] = useState<[number, number]>([40.7128, -74.006]);
+  const [isArabic, setIsArabic] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,8 +28,23 @@ const Index = () => {
 
   return (
     <div className="h-screen w-full overflow-hidden bg-background text-foreground">
-      <div className="pl-80 pr-0">
+      <div className="pl-80 pr-0 mt-3 ">
         <div className="p-6">
+          <div className="flex justify-between items-center pr-10">
+            <h3 className="text-black">hi</h3>
+          <button
+          onClick={() => setIsArabic(!isArabic)}
+          variant="outline"
+          className={`rounded-full p-3 ' ${
+            isArabic 
+              ? 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
+              : 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500' 
+          }`}
+        >
+          {isArabic ? 'English' : 'Arabic'}
+        </button>
+          </div>
+          <br></br>
           <Map
             alerts={alerts}
             midpoint={midpoint}
@@ -48,7 +64,8 @@ const AlertDetailPage = () => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/api/alerts/${id}`)
+      // .get(`http://127.0.0.1:8000/api/alerts/${id}`)
+      .get(`http://127.0.0.1:8000/api/alerts/${id}?lang=${isArabic ? 'ar' : 'en'}`)
       .then((res) => {
         setAlert(res.data);
       })
@@ -56,7 +73,7 @@ const AlertDetailPage = () => {
 
     // to send data to vector store
     axios
-      .get(`http://127.0.0.1:8000/api/vectorstore/${id}`)
+      .get(`http://127.0.0.1:8000/api/vectorstore/${id}?lang=${isArabic ? 'ar' : 'en'}`)
       .then((res) => {
         console.log("Vector store created:", res.data.message);
       })
@@ -65,7 +82,7 @@ const AlertDetailPage = () => {
       });
 
     axios
-      .get(`http://127.0.0.1:8000/api/summary/${id}`)
+      .get(`http://127.0.0.1:8000/api/summary/${id}?lang=${isArabic ? 'ar' : 'en'}`)
       .then((res) => {
         console.log("Summary created:", res.data.message);
       })
