@@ -7,7 +7,7 @@ Our AI-Powered Surveillance System is an advanced security dashboard designed to
 
 *Our system is built using <b>entirely open source</b> models and software. Due to the lack computational power, we have hosted our models on NVIDIA's online architecure.*
 
-*In order to reduce the overall computational overload caused by models due to constant monitoring, we have included a special motion based attention, to ensure that the frames processing is only done when required. This leads to an overall decrease in the number of frames undergoing model classification, ultimately reducing computations per incident.*
+*In order to reduce the overall computational overload caused by models due to constant monitoring, we have included a special motion based attention algorithm, to ensure that the frames processing is only done when required. This leads to an overall decrease in the number of frames undergoing model classification, ultimately reducing computations per incident.*
 
 *Developement of this project began right after our group's registration for the hackathon and in no part contains legacy code.*
 
