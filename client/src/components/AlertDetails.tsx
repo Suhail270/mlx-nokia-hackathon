@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AlertType } from '@/types/alerts';
-import { ChevronLeft, Bell, MapPin, Clock, MessageSquare, ArrowBigLeft } from 'lucide-react';
+import { ChevronLeft, Bell, MapPin, Clock, MessageSquare, ArrowBigLeft, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Map from '@/components/Map';
@@ -182,16 +182,6 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
             Your browser does not support the video tag.
           </video>
         </div>
-        {/* Right Section - Video
-        <div className="text-white w-1/2 bg-secondary rounded-lg mb-14 mt-5 mr-10 p-7 h-[88%]">
-          <video
-            src={alert.video_path}
-            controls
-            className="w-full h-full object-cover rounded-lg"
-          >
-            Your browser does not support the video tag.
-          </video>
-        </div> */}
 
       </div>
 
@@ -207,9 +197,15 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
       {chatbotVisible && (
         <div className="fixed bottom-16 right-16 w-[38rem] h-[30rem] bg-background shadow-lg rounded-t-lg p-5 rounded-lg flex flex-col border border-gray-500">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-black">Chatbot</h3>
-            <IoIosCloseCircle size={30}variant="ghost" onClick={toggleChatbot} />
+            <h3 className="text-lg font-semibold text-white">Chatbot</h3>
+            {/* <IoIosCloseCircle size={30} variant="ghost" onClick={toggleChatbot} /> */}
             {/* <Button variant="ghost" onClick={toggleChatbot} className='text-white bg-black px-3 py-2 text-sm'></Button> */}
+            <div
+              className="bg-red-500/20 text-red-500 rounded-full w-6 h-6 flex items-center justify-center cursor-pointer  text-lg"
+              onClick={toggleChatbot}
+            >
+              x
+            </div>
           </div>
           <div className="mt-4 flex-1 overflow-y-auto space-y-2">
             {messages.map((message, index) => (
