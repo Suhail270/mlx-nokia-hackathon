@@ -176,9 +176,9 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
         <script>console.log('Video Path:', alert.video_path);</script>
         {/* Right Section - Image */}
         <div className="text-white w-1/2 bg-secondary rounded-lg mb-14 mt-5 mr-10 p-7 h-[88%]">
-          <video controls className='h-full w-full'>
-            {/* <source src={`/${alert.video_path.split('/').pop()}`} type="video/mp4" /> */}
-            <source src="/2min.mp4" type="video/mp4" />
+          <video controls autoPlay className='h-full w-full'>
+            <source src={`/${alert.video_path.split('/').pop()}`} type="video/mp4" />
+            {/* <source src="/explosion3.mp4" type="video/mp4" /> */}
             Your browser does not support the video tag.
           </video>
         </div>
