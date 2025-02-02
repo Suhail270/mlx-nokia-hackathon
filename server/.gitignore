@@ -6,7 +6,7 @@ configure
 node_modules
 uploaded_docs
 audio_file
-results
 logs
 log
 resources
+client/node_modules
