@@ -135,3 +135,4 @@ def get_alert_summary(alert_id: int, lang: str = 'en', db=Depends(get_db)):
         "summary": processed_summary
     }
     return translation_service.translate_dict(response_data, lang)
+

@@ -5,7 +5,6 @@ from inference import InferencePipeline
 from inference.core.interfaces.camera.entities import VideoFrame
 from utils.logging_config import logger
 
-# Define input and output directories
 input_folder = "./server/videos"
 output_folder = "./server/annotated_videos"
 os.makedirs(output_folder, exist_ok=True)
