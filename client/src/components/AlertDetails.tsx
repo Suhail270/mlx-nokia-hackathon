@@ -193,7 +193,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
       {chatbotVisible && (
         <div className="fixed bottom-16 right-16 w-[75%] md:w-[38rem] h-[50%] md:h-[30rem] bg-background shadow-lg rounded-t-lg p-5 rounded-lg flex flex-col border border-gray-500 z-[100]">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-white">Chatbot</h3>
+            <h3 className="text-lg font-semibold text-white">             </h3>
             {/* <IoIosCloseCircle size={30} variant="ghost" onClick={toggleChatbot} /> */}
             {/* <Button variant="ghost" onClick={toggleChatbot} className='text-white bg-black px-3 py-2 text-sm'></Button> */}
             <div
