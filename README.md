@@ -58,6 +58,7 @@ Our AI-Powered Surveillance System is an advanced security dashboard designed to
    - Faiss, which stores vector embeddings along with Llama which helps genrate and rank them, ensures that the model's overall computation is reduced leading to more efficeint storage and retrival of incident reports.
    - Reports include event time, location, and a summary.
    - Metadata from the video is used to further add information to the reports.
+   - Further geographic location is extracted to generate insights about nearby establishments, to assist in decision making and enhanced response quality. 
 
 4. **Dashboard Display & Alerts:**
    - The React frontend displays live alerts and past incidents.
