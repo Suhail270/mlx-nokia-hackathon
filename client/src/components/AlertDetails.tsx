@@ -153,15 +153,6 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
             <p className="text-muted-foreground">{alert.description}</p>
           </div>
 
-          {/* Placeholder for Map */}
-          {/* <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[33.5%] w-[93%] overflow-hidden">
-            <Map 
-              alerts={[alert]} 
-              onAlertSelect={() => {}} 
-              midpoint={[alert.latitude, alert.longitude]} 
-            />
-          </div> */}
-
           <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[33.5%] w-[93%] overflow-hidden">
             <Map 
               alerts={[alert]} 
@@ -174,11 +165,10 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
 
         </div>
         <script>console.log('Video Path:', alert.video_path);</script>
-        {/* Right Section - Image */}
+        {/* Right Section - Video */}
         <div className="text-white w-1/2 bg-secondary rounded-lg mb-14 mt-5 mr-10 p-7 h-[88%]">
-          <video controls autoPlay className='h-full w-full'>
+          <video controls autoPlay loop className='h-full w-full'>
             <source src={`/${alert.video_path.split('/').pop()}`} type="video/mp4" />
-            {/* <source src="/explosion3.mp4" type="video/mp4" /> */}
             Your browser does not support the video tag.
           </video>
         </div>
