@@ -1,6 +1,6 @@
 import React from 'react';
 import { AlertType } from '@/types/alerts';
-import { Bell } from 'lucide-react';
+import { Bell, Siren } from 'lucide-react';
 
 interface AlertListProps {
   alerts: AlertType[];
@@ -9,16 +9,20 @@ interface AlertListProps {
 
 const AlertList = ({ alerts, onAlertSelect }: AlertListProps) => {
   return (
-    <div className="fixed left-0 top-0 h-full w-80 bg-background border-r border-border overflow-hidden">
+    <div className="fixed left-0 top-2 h-[95%] w-80 bg-background flex flex-col">
+      {/* Fixed header */}
       <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Alerts</h2>
           <span className="bg-primary/20 text-primary px-2 py-1 rounded-full text-sm">
             {alerts.length} Active
           </span>
         </div>
+      </div>
 
-        <div className="space-y-4">
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-6 space-y-4">
           {alerts.map((alert) => (
             <button
               key={alert.id}
@@ -27,11 +31,13 @@ const AlertList = ({ alerts, onAlertSelect }: AlertListProps) => {
             >
               <div className="flex items-start gap-3">
                 <div className={`p-2 rounded-full
-                  ${alert.severity === 'critical' ? 'bg-red-500/20 text-red-500' :
-                    alert.severity === 'warning' ? 'bg-orange-500/20 text-orange-500' :
-                      'bg-blue-500/20 text-blue-500'
-                  }`}>
-                  <Bell className="w-4 h-4" />
+                  ${alert.type === 'fire' ? 'bg-red-500/20 text-red-500' : 'bg-orange-500/20 text-orange-500' }`
+                  }>
+                  {alert.type === 'fire' ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                  ) : (
+                    <Siren className="w-4 h-4" />
+                  )}
                 </div>
                 <div>
                   <h3 className="font-medium capitalize">{alert.type}</h3>

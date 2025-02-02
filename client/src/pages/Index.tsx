@@ -1,57 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, useParams, useNavigate } from 'react-router-dom';
 import Map from '@/components/Map';
-import AlertPanel from '@/components/AlertPanel';
+import axios from 'axios';
 import AlertList from '@/components/AlertList';
+import AlertDetails from '@/components/AlertDetails';
 import { AlertType } from '@/types/alerts';
 
-// Mock data for demonstration
-const mockAlerts: AlertType[] = [
-  {
-    id: '1',
-    type: 'fire',
-    severity: 'critical',
-    location: '123 Main St, New York, NY',
-    latitude: 40.7128,
-    longitude: -74.0060,
-    timestamp: new Date().toISOString(),
-    description: 'Large fire detected in residential building. Multiple heat signatures detected.',
-    image: 'https://images.unsplash.com/photo-1599171571332-6d1c69c9f708?q=80&w=500&auto=format&fit=crop',
-  },
-  {
-    id: '2',
-    type: 'assault',
-    severity: 'warning',
-    location: '456 Park Ave, New York, NY',
-    latitude: 40.7528,
-    longitude: -73.9765,
-    timestamp: new Date().toISOString(),
-    description: 'Potential assault detected in parking garage. Two individuals involved.',
-    image: 'https://images.unsplash.com/photo-1617897711385-df9c86b7deb9?q=80&w=500&auto=format&fit=crop',
-  },
-];
-
 const Index = () => {
-  const [selectedAlert, setSelectedAlert] = useState<AlertType | null>(null);
+  const [alerts, setAlerts] = useState<AlertType[]>([]);
+  const [midpoint, setMidpoint] = useState<[number, number]>([40.7128, -74.006]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/api/alerts_with_midpoint")
+      .then((res) => {
+        setAlerts(res.data.alerts);
+        setMidpoint(res.data.midpoint);
+      })
+      .catch((err) => console.error("Error fetching alerts:", err));
+  }, []);
 
   const handleAlertSelect = (alert: AlertType) => {
-    setSelectedAlert(alert);
-  };
-
-  const handleClosePanel = () => {
-    setSelectedAlert(null);
+    navigate(`/alert/${alert.id}`);
   };
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-background text-foreground">
+    <div className="h-screen w-full overflow-hidden bg-background text-foreground">
       <div className="pl-80 pr-0">
         <div className="p-6">
-          <Map alerts={mockAlerts} onAlertSelect={handleAlertSelect} />
+          <Map
+            alerts={alerts}
+            midpoint={midpoint}
+            onAlertSelect={handleAlertSelect}
+          />
         </div>
       </div>
-      <AlertList alerts={mockAlerts} onAlertSelect={handleAlertSelect} />
-      <AlertPanel alert={selectedAlert} onClose={handleClosePanel} />
+      <AlertList alerts={alerts} onAlertSelect={handleAlertSelect} />
     </div>
   );
 };
 
-export default Index;
+const AlertDetailPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const [alert, setAlert] = useState<AlertType | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:8000/api/alerts/${id}`)
+      .then((res) => {
+        setAlert(res.data);
+      })
+      .catch((err) => console.error("Error fetching alert details:", err));
+
+    axios
+      .get(`http://127.0.0.1:8000/api/vectorstore/${id}`)
+      .then((res) => {
+        console.log("Vector store is ready:", res.data.message);
+      })
+      .catch((err) => {
+        console.error("Error sending id to vector store:", err);
+      });
+
+  }, [id]);
+
+  const handleBack = () => {
+    navigate('/');
+  };
+
+  if (!alert) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <AlertDetails alert={alert} onBack={handleBack} />
+  );
+};
+
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/alert/:id" element={<AlertDetailPage />} />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App;
