@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AlertType } from '@/types/alerts';
-import { ChevronLeft, Bell, MapPin, Clock, MessageSquare, ArrowBigLeft } from 'lucide-react';
+import { ChevronLeft, Bell, MapPin, Clock, MessageSquare, ArrowBigLeft, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Map from '@/components/Map';
@@ -11,6 +11,7 @@ import { IoIosCloseCircle,IoMdCloseCircle } from "react-icons/io";
 const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void }) => {
   const [chatbotVisible, setChatbotVisible] = useState(false);
   const [isResolved, setIsResolved] = useState(false);
+  const [isArabic, setIsArabic] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState([
     { text: 'Hi, how can I help you?', sender: 'chatbot' }, 
@@ -42,7 +43,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
   
     try {
       // Send the user's message and conversation history to the API
-      const response = await fetch(`http://localhost:8000/api/chat_with_alert/${alert.id}`, {
+      const response = await fetch(`http://localhost:8000/api/chat_with_alert/${alert.id}?lang=${isArabic ? 'ar' : 'en'}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,15 +118,15 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
       
 
       {/* Layout structure */}
-      <div className="flex gap-6 mt-0 pb-10 h-screen">
+      <div className="flex flex-col gap-6 mt-0 pb-10 h-screen md:flex-row overflow-hidden">
         {/* Left Section - Alert Information */}
-        <div className="text-white text-sm w-1/2">
+        <div className="text-white text-sm w-full md:w-1/2">
           {/* Alert Type and Severity */}
-          <div className="flex gap-6 p-5"> 
-            <div className="text-white text-sm w-1/3 bg-secondary rounded-lg p-5"> 
+          <div className="flex flex-col gap-6 p-5 md:flex-row"> 
+            <div className="text-white text-sm w-full md:w-1/3 bg-secondary rounded-lg p-5"> 
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-full          
-                  ${alert.type === 'fire' ? 'bg-red-500/20 text-red-500' : 'bg-orange-500/20 text-orange-500' }`} >
+                  ${alert.type === 'fire' || alert.type === 'نار' ? 'bg-red-500/20 text-red-500' : 'bg-orange-500/20 text-orange-500' }`} >
                   <Bell className="w-4 h-4" />
                 </div>
                 
@@ -136,7 +137,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
             </div>
 
             {/* Location */}
-            <div className="text-white text-sm w-2/3 bg-secondary rounded-lg p-5"> 
+            <div className="text-white text-sm w-full md:w-2/3 bg-secondary rounded-lg p-5"> 
               <div className="flex items-center gap-2 pt-2 justify-center">
                 <MapPin className="w-4 h-4" />
                 <p className="text-muted-foreground">{alert.location}</p>
@@ -145,7 +146,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
           </div>
 
           {/* Alert Details */}
-          <div className="text-white text-sm bg-secondary rounded-lg mt-2 mx-5 p-5 pt-3 h-[30%]"> 
+          <div className="text-white text-sm bg-secondary rounded-lg mt-2 mx-5 p-5 pt-3 h-[10%] md:h-[30%]"> 
             <div className="flex items-center gap-2 mb-4">
               <Clock className="w-5 h-5" />
               <h3 className="text-lg font-semibold">Details</h3>
@@ -153,16 +154,16 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
             <p className="text-muted-foreground">{alert.description}</p>
           </div>
 
-          {/* Placeholder for Map */}
-          {/* <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[33.5%] w-[93%] overflow-hidden">
-            <Map 
-              alerts={[alert]} 
-              onAlertSelect={() => {}} 
-              midpoint={[alert.latitude, alert.longitude]} 
-            />
-          </div> */}
+          {/* Video (Mobile View) */}
+          <div className="text-white w-[90%] bg-secondary rounded-lg mt-5 mx-5 p-0 h-[13%] md:hidden">
+            <video controls autoPlay loop className='h-full w-full'>
+              <source src={`/${alert.video_path.split('/').pop()}`} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
 
-          <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[33.5%] w-[93%] overflow-hidden">
+          {/* Map */}
+          <div className="text-white text-sm bg-secondary rounded-lg m-5 h-[12%] md:h-[33.5%] w-[93%] overflow-hidden">
             <Map 
               alerts={[alert]} 
               onAlertSelect={() => {}} 
@@ -170,46 +171,50 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
               centerOffset={100}
             />
           </div>
-
-
         </div>
-        <script>console.log('Video Path:', alert.video_path);</script>
-        {/* Right Section - Image */}
-        <div className="text-white w-1/2 bg-secondary rounded-lg mb-14 mt-5 mr-10 p-7 h-[88%]">
-          <video controls className='h-full w-full'>
-            {/* <source src={`/${alert.video_path.split('/').pop()}`} type="video/mp4" /> */}
-            <source src="/2min.mp4" type="video/mp4" />
+
+        {/* Right Section - Video (Desktop View) */}
+        <div className="text-white w-full md:w-1/2 bg-secondary rounded-lg mb-14 mt-5 mr-10 p-7 h-[88%] hidden md:block">
+          <video controls autoPlay loop className='h-full w-full'>
+            <source src={`/${alert.video_path.split('/').pop()}`} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
-        {/* Right Section - Video
-        <div className="text-white w-1/2 bg-secondary rounded-lg mb-14 mt-5 mr-10 p-7 h-[88%]">
-          <video
-            src={alert.video_path}
-            controls
-            className="w-full h-full object-cover rounded-lg"
-          >
-            Your browser does not support the video tag.
-          </video>
-        </div> */}
-
       </div>
 
       {/* Chatbot Popup Button */}
       <div
         onClick={toggleChatbot}
-        className="fixed bottom-5 right-5 bg-purple-400/80 p-3 rounded-full shadow-lg cursor-pointer mb-2"
+        className="fixed bottom-5 right-5 bg-purple-400/80 p-3 rounded-full shadow-lg cursor-pointer mb-2 z-50"
       >
         <span className="text-black"><MessageSquare className='w-6 h-6 scale-x-[-1]'/> </span> {/* Chat icon */}
       </div>
 
       {/* Chatbot Popup */}
       {chatbotVisible && (
-        <div className="fixed bottom-16 right-16 w-[38rem] h-[30rem] bg-background shadow-lg rounded-t-lg p-5 rounded-lg flex flex-col border border-gray-500">
+        <div className="fixed bottom-16 right-16 w-[75%] md:w-[38rem] h-[50%] md:h-[30rem] bg-background shadow-lg rounded-t-lg p-5 rounded-lg flex flex-col border border-gray-500 z-[100]">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-black">Chatbot</h3>
-            <IoIosCloseCircle size={30}variant="ghost" onClick={toggleChatbot} />
+            <h3 className="text-lg font-semibold text-white">      </h3>
+            {/* <button className="bg-purple-400/80 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 p-2"> ENGLISH </button> */}
+            {/* <Button
+              onClick={() => setIsArabic(!isArabic)}
+              variant="outline"
+              className={`rounded-full mr-10 ${
+                isArabic 
+                  ? 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500' 
+                  : 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
+              }`}
+            >
+              {isArabic ? 'English' : 'Arabic'}
+            </Button> */}
+            {/* <IoIosCloseCircle size={30} variant="ghost" onClick={toggleChatbot} /> */}
             {/* <Button variant="ghost" onClick={toggleChatbot} className='text-white bg-black px-3 py-2 text-sm'></Button> */}
+            <div
+              className="bg-red-500/20 text-red-500 rounded-full w-6 h-6 flex items-center justify-center cursor-pointer  text-lg"
+              onClick={toggleChatbot}
+            >
+              x
+            </div>
           </div>
           <div className="mt-4 flex-1 overflow-y-auto space-y-2">
             {messages.map((message, index) => (
@@ -236,7 +241,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
               type="text"
               value={inputValue}
               onChange={handleInputChange}
-              className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-black w-[60%]"
               placeholder="Type a message..."
             />
             <Button

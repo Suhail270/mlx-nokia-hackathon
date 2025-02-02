@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from services.search_service import embed_text, rerank_passages, generate_answer
 from utils.logging_config import logger
+from utils.translation import translation_service
 
 router = APIRouter()
 
@@ -14,18 +15,14 @@ class ChatRequest(BaseModel):
     conversation_history: list = []
 
 @router.post("/chat_with_alert/{alert_id}")
-def chat_with_alert(alert_id: int, request: ChatRequest):
-    """
-    Given an alert id and a user's query (with optional conversation history),
-    load the associated vector store (or create one if needed), perform a retrieval,
-    and generate an LLM response that respects both the alert context and conversation.
-    """
+def chat_with_alert(alert_id: int, request: ChatRequest, lang: str = 'en'):
     vectorstore_path = os.path.join("results", f"vectorstore_{alert_id}.pkl")
     
     if not os.path.exists(vectorstore_path):
         raise HTTPException(status_code=404, detail="Vector store not found. Please select the alert first.")
     
     try:
+        print("vectorstore_path", vectorstore_path)
         with open(vectorstore_path, "rb") as f:
             vectorstore_data = pickle.load(f)
     except Exception as e:
@@ -87,8 +84,15 @@ def chat_with_alert(alert_id: int, request: ChatRequest):
     
     try:
         answer = generate_answer(request.query, top_passages, messages=messages)
+
     except Exception as e:
         logger.error(f"Error generating LLM answer: {e}")
         raise HTTPException(status_code=500, detail="LLM query failed.")
+    
+    response_data = {
+        "answer": answer,
+        "passages": top_passages
+    }
+    return translation_service.translate_dict(response_data, lang)
     
     return {"answer": answer, "passages": top_passages}

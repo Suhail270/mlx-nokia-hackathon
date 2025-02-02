@@ -13,10 +13,7 @@ router = APIRouter()
 
 @router.get("/vectorstore/{alert_id}")
 def ensure_vectorstore(alert_id: int, db=Depends(get_db)):
-    """
-    Check if a vector store for the given alert exists.
-    If not, create it from the alert's data.
-    """
+
     vectorstore_path = os.path.join("results", f"vectorstore_{alert_id}.pkl")
     
     if not os.path.exists(vectorstore_path):
@@ -47,6 +44,7 @@ def ensure_vectorstore(alert_id: int, db=Depends(get_db)):
         os.makedirs("results", exist_ok=True)
         vectorstore_data = {"index": index, "doc_map": doc_map}
         try:
+            print("vectorstore_path", vectorstore_path)
             with open(vectorstore_path, "wb") as f:
                 pickle.dump(vectorstore_data, f)
             logger.info(f"Vector store created and saved at {vectorstore_path}.")
