@@ -27,39 +27,26 @@ class Police(Base):
     __tablename__ = "police"
 
     id = Column(Integer, primary_key=True, index=True)
-    alert_id = Column(String, ForeignKey("alerts.id"), nullable=False)
-    status = Column(Boolean, default=False)
-    dispatched_at = Column(String)
-    
-    alert = relationship("Alert", back_populates="police")
-
+    zone = Column(String)
 
 class Firefighter(Base):
     __tablename__ = "firefighter"
 
     id = Column(Integer, primary_key=True, index=True)
-    alert_id = Column(String, ForeignKey("alerts.id"), nullable=False)
-    status = Column(Boolean, default=False)
-    dispatched_at = Column(String)
-    
-    alert = relationship("Alert", back_populates="firefighter")
+    zone = Column(String)
 
 class Ambulance(Base):
     __tablename__ = "ambulance"
 
     id = Column(Integer, primary_key=True, index=True)
-    alert_id = Column(String, ForeignKey("alerts.id"), nullable=False)
-    status = Column(Boolean, default=False)
-    dispatched_at = Column(String)
-    
+    zone = Column(String)
+
     alert = relationship("Alert", back_populates="ambulance")
 
 class Drone(Base):
     __tablename__ = "drone"
 
     id = Column(Integer, primary_key=True, index=True)
-    alert_id = Column(String, ForeignKey("alerts.id"), nullable=False)
-    status = Column(Boolean, default=False)
-    dispatched_at = Column(String)
-    
+    zone = Column(String)
+
     alert = relationship("Alert", back_populates="drone")
