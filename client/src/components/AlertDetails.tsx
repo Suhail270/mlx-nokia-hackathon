@@ -8,6 +8,7 @@ import Map from '@/components/Map';
 import Image from 'next/image';
 import { MdClose } from 'react-icons/md';
 import { IoIosCloseCircle,IoMdCloseCircle } from "react-icons/io";
+import  StatusButton from "./StatusButton";
 
 const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void }) => {
   const [chatbotVisible, setChatbotVisible] = useState(false);
@@ -123,7 +124,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
         </Button>
 
         {/* Status Button */}
-        <Button
+        {/* <Button
           onClick={() => setIsResolved(!isResolved)}
           variant="outline"
           className={`rounded-full mr-10 ${
@@ -133,7 +134,9 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
           }`}
         >
           {isResolved ? 'Resolved' : 'Unresolved'}
-        </Button>
+        </Button> */}
+
+        <StatusButton/>
       </div>
 
       
@@ -152,16 +155,16 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
                 </div>
                 
                 <div>
-                  <h2 className="text-md font-semibold capitalize">{alert.type} Alert</h2>  
+                  <h2 className="text-lg text-muted-foreground capitalize">{alert.type} Alert</h2>  
                 </div>
               </div>
             </div>
 
             {/* Location */}
-            <div className="text-white text-sm w-full md:w-2/3 bg-secondary rounded-lg p-5"> 
-              <div className="flex items-center gap-2 pt-2 justify-center">
-                <MapPin className="w-4 h-4" />
-                <p className="text-muted-foreground">{alert.location}</p>
+            <div className="text-white text-sm w-full md:w-2/3 bg-secondary rounded-lg"> 
+              <div className="flex justify-center gap-2 pt-5 overflow-x-auto">
+                <MapPin className="w-5 h-5" />
+                <p className="text-muted-foreground text-lg">{alert.location}</p>
               </div>
             </div>
           </div>
