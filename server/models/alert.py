@@ -14,3 +14,4 @@ class Alert(Base):
     description = Column(String)
     image = Column(String)
     video_path = Column(String)
+    geo_info = Column(String)

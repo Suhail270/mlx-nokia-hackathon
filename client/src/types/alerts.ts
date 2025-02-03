@@ -1,6 +1,6 @@
 export interface AlertType {
   id: string;
-  type: 'fire' | 'assault' | 'kidnapping' | 'other';
+  type: 'fire' | 'assault' | 'kidnapping' | 'other' | 'نار' | 'يتعدى';
   severity: 'critical' | 'warning' | 'info';
   location: string;
   latitude: number;
