@@ -37,7 +37,6 @@ class TranslationService:
             
         translated_data = {}
         for key, value in data.items():
-            # Skip translation for specific fields
             if key in ['id', 'alert_id', 'timestamp', 'latitude', 'longitude', 
                       'image', 'video_path', 'midpoint']:
                 translated_data[key] = value
