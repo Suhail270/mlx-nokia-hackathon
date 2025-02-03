@@ -95,7 +95,6 @@ def get_alert_summary(alert_id: int, lang: str = 'en', db=Depends(get_db)):
         f"Timestamp: {alert.timestamp}\n"
         f"Description: {alert.description}\n"
         f"Image: {alert.image}"
-        f"Other Information: {alert.geo_info}"
     )
     
     vlm_analysis = call_vlm_model(alert_id, db)
