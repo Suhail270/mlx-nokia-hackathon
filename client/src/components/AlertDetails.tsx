@@ -20,6 +20,14 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
   const [messages, setMessages] = useState([
     { text: 'Hi, how can I help you?', sender: 'chatbot' }, 
   ]);
+  const [status, setStatus] = useState(() => {
+    const savedStatus = localStorage.getItem(`alertStatus_${alert.id}`);
+    return savedStatus || 'pending'; // Default status if nothing is saved
+  });
+
+  useEffect(() => {
+    localStorage.setItem(`alertStatus_${alert.id}`, status);
+  }, [status, alert.id]);
 
   useEffect(() => {
     const fetchSummary = async () => {
@@ -96,6 +104,11 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
   
   };
 
+   // Function to update the status
+   const updateStatus = (newStatus) => {
+    setStatus(newStatus);
+  };
+
 
   return (
     <div className="bg-background w-full mt-5 pl-2 relative">
@@ -136,7 +149,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
           {isResolved ? 'Resolved' : 'Unresolved'}
         </Button> */}
 
-        <StatusButton/>
+        <StatusButton status={status} onStatusChange={updateStatus}/>
       </div>
 
       

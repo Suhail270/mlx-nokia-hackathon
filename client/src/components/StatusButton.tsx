@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
-
 const StatusButton = () => {
-  // State to track the current status
-  const [status, setStatus] = useState('unresolved');
+  // Initialize state from localStorage or default to 'unresolved'
+  const [status, setStatus] = useState(() => {
+    return localStorage.getItem('buttonStatus') || 'unresolved';
+  });
+
+  // Save status to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('buttonStatus', status);
+  }, [status]);
 
   // Function to handle button click and cycle through statuses
   const handleClick = () => {
@@ -43,7 +49,7 @@ const StatusButton = () => {
       variant="outline"
       className={`rounded-full mr-10 ${getButtonStyle()}`}
     >
-      {status.charAt(0).toUpperCase() + status.slice(1)} {/* Capitalize first letter */}
+      {status.charAt(0).toUpperCase() + status.slice(1)}
     </Button>
   );
 };
