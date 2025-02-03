@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { AlertType } from '@/types/alerts';
 import { ChevronLeft, Bell, MapPin, Clock, MessageSquare, ArrowBigLeft, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { LanguageContext } from '../pages/LanguageContext';
 import Map from '@/components/Map';
 import Image from 'next/image';
 import { MdClose } from 'react-icons/md';
@@ -11,7 +12,8 @@ import { IoIosCloseCircle,IoMdCloseCircle } from "react-icons/io";
 const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void }) => {
   const [chatbotVisible, setChatbotVisible] = useState(false);
   const [isResolved, setIsResolved] = useState(false);
-  const [isArabic, setIsArabic] = useState(false);
+  // const [isArabic, setIsArabic] = useState(false);
+  const languageContext = useContext(LanguageContext);
   const [inputValue, setInputValue] = useState('');
   const [summary, setSummary] = useState('');
   const [messages, setMessages] = useState([
@@ -21,7 +23,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/summary/${alert.id}`);
+        const response = await fetch(`http://localhost:8000/api/summary/${alert.id}?lang=${languageContext.isArabic ? 'ar' : 'en'}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -34,7 +36,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
     };
 
     fetchSummary();
-  }, [alert.id]);
+  });
 
 
   const toggleChatbot = () => {
@@ -62,7 +64,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
   
     try {
       // Send the user's message and conversation history to the API
-      const response = await fetch(`http://localhost:8000/api/chat_with_alert/${alert.id}?lang=${isArabic ? 'ar' : 'en'}`, {
+      const response = await fetch(`http://localhost:8000/api/chat_with_alert/${alert.id}?lang=${languageContext.isArabic ? 'ar' : 'en'}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
