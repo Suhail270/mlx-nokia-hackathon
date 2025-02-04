@@ -52,6 +52,7 @@ class Drone(Base):
 class Dispatch(Base):
     __tablename__ = "dispatch"
 
+    id = Column(String, primary_key=True, index=True)
     alert_id = Column(String, ForeignKey("alerts.id"))
     police_id = Column(String, ForeignKey("police.id"))
     ambulance_id = Column(String, ForeignKey("ambulance.id"))
