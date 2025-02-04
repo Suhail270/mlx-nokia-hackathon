@@ -81,7 +81,7 @@ def generate_report_from_data(incidents):
 
     # Create the prompt for Gen AI
     prompt = f"""
-    You are an AI assistant generating a weekly incident report. Be straight forward and maintain a structure that can be placed into a pdf file. Do not talk to me. Only give me the text that would be put in the PDF.
+    You are an AI assistant generating a periodic (defined in number of days) incident report. Be straight forward and maintain a structure that can be placed into a pdf file. Do not talk to me. Only give me the text that would be put in the PDF.
     Analyze the following incident data and summarize key insights:
 
     {incident_text}
