@@ -8,8 +8,7 @@ import Map from '@/components/Map';
 
 const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void }) => {
   const [chatbotVisible, setChatbotVisible] = useState(false);
-  const [isResolved, setIsResolved] = useState(false);
-  // const [isArabic, setIsArabic] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState(alert.status);
   const languageContext = useContext(LanguageContext);
   const [inputValue, setInputValue] = useState('');
   const [summary, setSummary] = useState('');
@@ -35,6 +34,44 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
     fetchSummary();
   });
 
+  const handleStatusChange = async () => {
+    let newStatus;
+    switch (currentStatus.toLowerCase()) {
+      case 'unresolved':
+        newStatus = 'in progress';
+        break;
+      case 'in progress':
+        newStatus = 'resolved';
+        break;
+      case 'resolved':
+        // Resolved remains resolved
+        return;
+      default:
+        newStatus = 'unresolved';
+    }
+  
+    try {
+      // Update the status in the backend
+      const response = await fetch(`http://localhost:8000/api/alerts/${alert.id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update status');
+      }
+  
+      // Update the local state
+      setCurrentStatus(newStatus);
+      window.location.reload();
+      
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
+  };
 
   const toggleChatbot = () => {
     setChatbotVisible(!chatbotVisible);
@@ -121,6 +158,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
         {/* Status Button */}
         <Button
         variant="outline"
+        onClick={handleStatusChange}
         className={`rounded-full mr-10 capitalize ${
           alert.status.toLowerCase() === 'resolved'
             ? 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500'
