@@ -48,7 +48,7 @@ def get_dispatch_data(dispatches):
         for dispatch in dispatches
     ]
 
-@router.get("/json/{days}")
+@router.get("/reports/json/{days}")
 def get_json_data(days: int, db: Session = Depends(get_db)):
     # Get the date range
     date_from = datetime.now() - timedelta(days=days)

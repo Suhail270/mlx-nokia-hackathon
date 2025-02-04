@@ -4,7 +4,7 @@ from db.session import engine, Base
 from models.alert import Alert
 from api import alerts, events, chatbot
 from utils.logging_config import logger
-from api import alerts, events, chatbot, vectorstore, summary, video, report_json
+from api import alerts, events, chatbot, vectorstore, summary, video, report_json, report_excel
 from fastapi.staticfiles import StaticFiles
 import os
 
@@ -35,6 +35,7 @@ app.include_router(vectorstore.router, prefix="/api")
 app.include_router(summary.router, prefix="/api")
 app.include_router(video.router, prefix="/api")
 app.include_router(report_json.router, prefix="/api")
+app.include_router(report_excel.router, prefix="/api")
 
 
 if __name__ == "__main__":
