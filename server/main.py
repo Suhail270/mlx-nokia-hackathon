@@ -4,7 +4,7 @@ from db.session import engine, Base
 from models.alert import Alert
 from api import alerts, events, chatbot
 from utils.logging_config import logger
-from api import alerts, events, chatbot, vectorstore, summary, video
+from api import alerts, events, chatbot, vectorstore, summary, video, report_json, report_excel
 from fastapi.staticfiles import StaticFiles
 import os
 
@@ -20,7 +20,9 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:8081","http://localhost:8080"],
+
+    allow_origins=["http://localhost:5173", "http://localhost:8081","http://localhost:8080","http://localhost:8082"],
+
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -32,6 +34,8 @@ app.include_router(chatbot.router, prefix="/api")
 app.include_router(vectorstore.router, prefix="/api")
 app.include_router(summary.router, prefix="/api")
 app.include_router(video.router, prefix="/api")
+app.include_router(report_json.router, prefix="/api")
+app.include_router(report_excel.router, prefix="/api")
 
 
 if __name__ == "__main__":
