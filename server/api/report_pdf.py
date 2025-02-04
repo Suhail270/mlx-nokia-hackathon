@@ -1,7 +1,10 @@
+from fastapi import APIRouter, Depends, HTTPException
+
 import sqlite3
 from http.client import HTTPException
 import os
 import textwrap
+from fastapi.responses import FileResponse
 from openai import OpenAI
 from dotenv import load_dotenv
 import re
@@ -10,6 +13,8 @@ from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 import os.path
 # from db.session import get_db
+router = APIRouter()
+
 load_dotenv()
 NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
 
@@ -48,7 +53,7 @@ def engage_llm(prompt):
 embedding_client = OpenAI(api_key=NVIDIA_API_KEY, base_url="https://integrate.api.nvidia.com/v1")
 llm_client = OpenAI(api_key=NVIDIA_API_KEY, base_url="https://integrate.api.nvidia.com/v1")
 
-
+@router.get("/report-pdf/{interval}")
 def create_reports(interval):
     # Connect to the database
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -70,7 +75,8 @@ def create_reports(interval):
     conn.close()
     prompt = generate_report_from_data(incidents)
     processed_summary = engage_llm(prompt)
-    save_report_to_pdf(processed_summary)
+    PDF_FILE_PATH = save_report_to_pdf(processed_summary)
+    return FileResponse(PDF_FILE_PATH, media_type="application/pdf", filename="incident_report.pdf")
 
 def generate_report_from_data(incidents):
 
@@ -144,6 +150,8 @@ def save_report_to_pdf(report_text, filename="server/report/incident_report.pdf"
             c.rect(margin_x, margin_y, text_width, text_height)
 
     c.save()
+    
     print(f"Report saved as {filename}")
+    return filename
 
-create_reports(7)
+
