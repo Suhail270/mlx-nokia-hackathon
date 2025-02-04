@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { AlertType } from '@/types/alerts';
-import { ChevronLeft, Bell, MapPin, Clock, MessageSquare, ArrowBigLeft, X } from 'lucide-react';
+import { Bell, MapPin, Clock, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { LanguageContext } from '../pages/LanguageContext';
 import Map from '@/components/Map';
-import Image from 'next/image';
-import { MdClose } from 'react-icons/md';
-import { IoIosCloseCircle,IoMdCloseCircle } from "react-icons/io";
+
 
 const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void }) => {
   const [chatbotVisible, setChatbotVisible] = useState(false);
-  const [isResolved, setIsResolved] = useState(false);
-  const [isArabic, setIsArabic] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState(alert.status);
+  const languageContext = useContext(LanguageContext);
   const [inputValue, setInputValue] = useState('');
   const [summary, setSummary] = useState('');
   const [messages, setMessages] = useState([
@@ -21,7 +19,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/summary/${alert.id}`);
+        const response = await fetch(`http://localhost:8000/api/summary/${alert.id}?lang=${languageContext.isArabic ? 'ar' : 'en'}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -34,8 +32,46 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
     };
 
     fetchSummary();
-  }, [alert.id]);
+  });
 
+  const handleStatusChange = async () => {
+    let newStatus;
+    switch (currentStatus.toLowerCase()) {
+      case 'unresolved':
+        newStatus = 'in progress';
+        break;
+      case 'in progress':
+        newStatus = 'resolved';
+        break;
+      case 'resolved':
+        // Resolved remains resolved
+        return;
+      default:
+        newStatus = 'unresolved';
+    }
+  
+    try {
+      // Update the status in the backend
+      const response = await fetch(`http://localhost:8000/api/alerts/${alert.id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update status');
+      }
+  
+      // Update the local state
+      setCurrentStatus(newStatus);
+      window.location.reload();
+      
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
+  };
 
   const toggleChatbot = () => {
     setChatbotVisible(!chatbotVisible);
@@ -62,7 +98,7 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
   
     try {
       // Send the user's message and conversation history to the API
-      const response = await fetch(`http://localhost:8000/api/chat_with_alert/${alert.id}?lang=${isArabic ? 'ar' : 'en'}`, {
+      const response = await fetch(`http://localhost:8000/api/chat_with_alert/${alert.id}?lang=${languageContext.isArabic ? 'ar' : 'en'}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +129,6 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
   
   };
 
-
   return (
     <div className="bg-background w-full mt-5 pl-2 relative">
 
@@ -122,16 +157,19 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
 
         {/* Status Button */}
         <Button
-          onClick={() => setIsResolved(!isResolved)}
-          variant="outline"
-          className={`rounded-full mr-10 ${
-            isResolved 
-              ? 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500' 
-              : 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
-          }`}
-        >
-          {isResolved ? 'Resolved' : 'Unresolved'}
-        </Button>
+        variant="outline"
+        onClick={handleStatusChange}
+        className={`rounded-full mr-10 capitalize ${
+          alert.status.toLowerCase() === 'resolved'
+            ? 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500'
+            : alert.status.toLowerCase() === 'in progress'
+            ? 'bg-yellow-600/20 hover:bg-yellow-600/20 text-yellow-500 hover:text-yellow-500'
+            : 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
+        }`}
+      >
+        {alert.status}
+      </Button>
+
       </div>
 
       
@@ -150,27 +188,30 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
                 </div>
                 
                 <div>
-                  <h2 className="text-md font-semibold capitalize">{alert.type} Alert</h2>  
+                  <h2 className="text-lg text-muted-foreground capitalize">{alert.type} Alert</h2>  
                 </div>
               </div>
             </div>
 
             {/* Location */}
-            <div className="text-white text-sm w-full md:w-2/3 bg-secondary rounded-lg p-5"> 
-              <div className="flex items-center gap-2 pt-2 justify-center">
-                <MapPin className="w-4 h-4" />
-                <p className="text-muted-foreground">{alert.location}</p>
+            <div className="text-white text-sm w-full md:w-2/3 bg-secondary rounded-lg"> 
+              <div className="flex justify-center gap-2 pt-5 overflow-x-auto">
+                <MapPin className="w-5 h-5" />
+                <p className="text-muted-foreground text-lg">{alert.location}</p>
               </div>
             </div>
           </div>
 
           {/* Alert Details */}
           <div className="text-white text-sm bg-secondary rounded-lg mt-2 mx-5 p-5 pt-3 h-[10%] md:h-[30%]"> 
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-2">
               <Clock className="w-5 h-5" />
               <h3 className="text-lg font-semibold">Details</h3>
             </div>
-            <p className="text-muted-foreground">{summary}</p>
+            <div className='overflow-y-auto h-[77%]'>
+              <p className="text-muted-foreground">{summary}</p>
+            </div>
+            
           </div>
 
           {/* Video (Mobile View) */}

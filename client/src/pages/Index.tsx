@@ -5,8 +5,8 @@ import axios from 'axios';
 import AlertList from '@/components/AlertList';
 import AlertDetails from '@/components/AlertDetails';
 import { AlertType } from '@/types/alerts';
-import { LanguageProvider } from './LanguageContext';
-import { LanguageContext } from './LanguageContext';
+import { LanguageProvider } from '@/pages/LanguageContext';
+import { LanguageContext } from '@/pages/LanguageContext';
 
 const Index = () => {
   const [alerts, setAlerts] = useState<AlertType[]>([]);

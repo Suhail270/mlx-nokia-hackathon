@@ -9,4 +9,9 @@ export interface AlertType {
   description: string;
   image?: string;
   video_path: string;
+  geo_info: string;
+  responder_type: string
+  response_time: number
+  resolution_time: number
+  status: string
 }
