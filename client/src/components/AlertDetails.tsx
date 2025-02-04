@@ -120,17 +120,17 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
 
         {/* Status Button */}
         <Button
-          variant="outline"
-          className={`rounded-full mr-10 capitalize ${
-            alert.status.toLowerCase() === 'resolved'
-              ? 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500'
-              : alert.status.toLowerCase() === 'in progress'
-              ? 'bg-yellow-600/20 hover:bg-yellow-600/20 text-yellow-500 hover:text-yellow-500'
-              : 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
-          }`}
-        >
-          {alert.status}
-        </Button>
+        variant="outline"
+        className={`rounded-full mr-10 capitalize ${
+          alert.status.toLowerCase() === 'resolved'
+            ? 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500'
+            : alert.status.toLowerCase() === 'in progress'
+            ? 'bg-yellow-600/20 hover:bg-yellow-600/20 text-yellow-500 hover:text-yellow-500'
+            : 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
+        }`}
+      >
+        {alert.status}
+      </Button>
 
       </div>
 
