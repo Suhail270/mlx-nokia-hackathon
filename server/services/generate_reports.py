@@ -128,5 +128,3 @@ def save_report_to_pdf(report_text, filename="incident_report.pdf"):
 
     c.save()
     print(f"Report saved as {filename}")
-
-create_reports(7)
