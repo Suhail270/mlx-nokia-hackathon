@@ -97,7 +97,7 @@ def generate_report_from_data(incidents):
     """
     return prompt
 
-def save_report_to_pdf(report_text, filename="incident_report.pdf"):
+def save_report_to_pdf(report_text, filename="server/report/incident_report.pdf"):
     """Generate a PDF file with a bordered report."""
     c = canvas.Canvas(filename, pagesize=letter)
     width, height = letter
@@ -146,4 +146,4 @@ def save_report_to_pdf(report_text, filename="incident_report.pdf"):
     c.save()
     print(f"Report saved as {filename}")
 
-
+create_reports(7)
