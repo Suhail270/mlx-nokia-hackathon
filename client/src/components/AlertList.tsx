@@ -8,6 +8,16 @@ interface AlertListProps {
 }
 
 const AlertList = ({ alerts, onAlertSelect }: AlertListProps) => {
+  const getStatusClasses = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'resolved':
+        return 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500 capitalize'
+      case 'in progress':
+        return 'bg-yellow-600/20 hover:bg-yellow-600/20 text-yellow-500 hover:text-yellow-500 capitalize'
+      default:
+        return 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500 capitalize'
+    }
+  }
   
   return (
     <div className="fixed left-0 top-2 h-[95%] w-80 bg-background flex flex-col">
@@ -33,15 +43,25 @@ const AlertList = ({ alerts, onAlertSelect }: AlertListProps) => {
               <div className="flex items-start gap-3">
                 <div className={`p-2 rounded-full
                   ${alert.type === 'fire' || alert.type === 'نار' ? 'bg-red-500/20 text-red-500' : 'bg-orange-500/20 text-orange-500' }`
-                  }>
+                }>
                   {alert.type === 'fire' || alert.type === 'نار' ? (
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
                   ) : (
                     <Siren className="w-4 h-4" />
                   )}
                 </div>
-                <div>
-                  <h3 className="font-medium capitalize">{alert.type}</h3>
+
+                <div className='w-full'>
+                  <div className='flex justify-between'>
+                    <div>
+                      <h3 className="font-medium capitalize">{alert.type}</h3>
+                    </div>
+                    <div className='pr-2'>
+                      <p className={`px-2 py-0.5 rounded-full text-sm ${getStatusClasses(alert.status)}`}>
+                        {alert.status}
+                      </p>
+                    </div>
+                  </div>                                   
                   <p className="text-sm text-muted-foreground mt-1">{alert.location}</p>
                   <p className="text-xs text-muted-foreground mt-2">
                     {new Date(alert.timestamp).toLocaleTimeString()}

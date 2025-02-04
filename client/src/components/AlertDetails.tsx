@@ -1,14 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AlertType } from '@/types/alerts';
-import { ChevronLeft, Bell, MapPin, Clock, MessageSquare, ArrowBigLeft, X } from 'lucide-react';
+import { Bell, MapPin, Clock, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { LanguageContext } from '../pages/LanguageContext';
 import Map from '@/components/Map';
-import Image from 'next/image';
-import { MdClose } from 'react-icons/md';
-import { IoIosCloseCircle,IoMdCloseCircle } from "react-icons/io";
-import  StatusButton from "./StatusButton";
+
 
 const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void }) => {
   const [chatbotVisible, setChatbotVisible] = useState(false);
@@ -123,19 +119,19 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
         </Button>
 
         {/* Status Button */}
-        {/* <Button
-          onClick={() => setIsResolved(!isResolved)}
+        <Button
           variant="outline"
-          className={`rounded-full mr-10 ${
-            isResolved 
-              ? 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500' 
+          className={`rounded-full mr-10 capitalize ${
+            alert.status.toLowerCase() === 'resolved'
+              ? 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500'
+              : alert.status.toLowerCase() === 'in progress'
+              ? 'bg-yellow-600/20 hover:bg-yellow-600/20 text-yellow-500 hover:text-yellow-500'
               : 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
           }`}
         >
-          {isResolved ? 'Resolved' : 'Unresolved'}
-        </Button> */}
+          {alert.status}
+        </Button>
 
-        <StatusButton/>
       </div>
 
       

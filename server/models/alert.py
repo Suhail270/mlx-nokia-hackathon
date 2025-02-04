@@ -17,6 +17,9 @@ class Alert(Base):
     video_path = Column(String)
     geo_info = Column(String)
     responder_type = Column(String)
+    response_time = Column(Integer)
+    resolution_time = Column(Integer)
+    status = Column(String)
 
     police = relationship("Police", back_populates="alert", cascade="all, delete")
     firefighter = relationship("Firefighter", back_populates="alert", cascade="all, delete")
