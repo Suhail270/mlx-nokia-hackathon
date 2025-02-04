@@ -116,7 +116,19 @@ def save_report_to_pdf(report_text, filename="incident_report.pdf"):
     line_height = 14  # Spacing between lines
 
     for line in report_text.split("\n"):
-        c.drawString(margin_x + 10, y_position, line)  # Indent text inside border
+        words = re.split(r"(\*\*.*?\*\*)", line)  
+        x_position = margin_x + 10
+
+        for word in words:
+            if word.startswith("**") and word.endswith("**"):
+                c.setFont("Helvetica-Bold", 12)  # Apply bold font
+                word = word[2:-2]  # Remove **
+            else:
+                c.setFont("Helvetica", 12)  # Normal font
+
+            c.drawString(x_position, y_position, word)
+            x_position += c.stringWidth(word, c._fontname, 12) + 5  # Move right
+
         y_position -= line_height
         if y_position < margin_y + 20:  # Create new page if needed
             c.showPage()
