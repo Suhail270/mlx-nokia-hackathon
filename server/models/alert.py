@@ -20,7 +20,6 @@ class Alert(Base):
     response_time = Column(Integer)
     resolution_time = Column(Integer)
     status = Column(String)
-
     dispatch = relationship("Dispatch", back_populates="alert", cascade="all, delete-orphan")
 
 

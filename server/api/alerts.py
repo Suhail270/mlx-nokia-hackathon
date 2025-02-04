@@ -4,8 +4,32 @@ from db.session import get_db
 from models.alert import Alert
 from utils.logging_config import logger
 from utils.translation import translation_service
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 router = APIRouter()
+
+# Pydantic model for request body
+class AlertStatusUpdate(BaseModel):
+    status: str
+
+@router.patch("/alerts/{alert_id}/status")
+def update_alert_status(
+    alert_id: str,
+    status_update: AlertStatusUpdate,
+    db: Session = Depends(get_db)
+):
+    # Fetch the alert from the database
+    alert = db.query(Alert).filter(Alert.id == alert_id).first()
+    if not alert:
+        raise HTTPException(status_code=404, detail="Alert not found")
+
+    # Update the status
+    alert.status = status_update.status
+    db.commit()
+    db.refresh(alert)
+
+    return {"message": "Status updated successfully", "alert": alert}
 
 def extract_midpoints_alerts(alerts):
     if not alerts:

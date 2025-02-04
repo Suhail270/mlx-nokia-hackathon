@@ -1,19 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AlertType } from '@/types/alerts';
-import { ChevronLeft, Bell, MapPin, Clock, MessageSquare, ArrowBigLeft, X } from 'lucide-react';
+import { Bell, MapPin, Clock, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { LanguageContext } from '../pages/LanguageContext';
 import Map from '@/components/Map';
-import Image from 'next/image';
-import { MdClose } from 'react-icons/md';
-import { IoIosCloseCircle,IoMdCloseCircle } from "react-icons/io";
-import  StatusButton from "./StatusButton";
+
 
 const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void }) => {
   const [chatbotVisible, setChatbotVisible] = useState(false);
-  const [isResolved, setIsResolved] = useState(false);
-  // const [isArabic, setIsArabic] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState(alert.status);
   const languageContext = useContext(LanguageContext);
   const [inputValue, setInputValue] = useState('');
   const [summary, setSummary] = useState('');
@@ -39,6 +34,44 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
     fetchSummary();
   });
 
+  const handleStatusChange = async () => {
+    let newStatus;
+    switch (currentStatus.toLowerCase()) {
+      case 'unresolved':
+        newStatus = 'in progress';
+        break;
+      case 'in progress':
+        newStatus = 'resolved';
+        break;
+      case 'resolved':
+        // Resolved remains resolved
+        return;
+      default:
+        newStatus = 'unresolved';
+    }
+  
+    try {
+      // Update the status in the backend
+      const response = await fetch(`http://localhost:8000/api/alerts/${alert.id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update status');
+      }
+  
+      // Update the local state
+      setCurrentStatus(newStatus);
+      window.location.reload();
+      
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
+  };
 
   const toggleChatbot = () => {
     setChatbotVisible(!chatbotVisible);
@@ -123,19 +156,20 @@ const AlertDetails = ({ alert, onBack }: { alert: AlertType; onBack: () => void 
         </Button>
 
         {/* Status Button */}
-        {/* <Button
-          onClick={() => setIsResolved(!isResolved)}
-          variant="outline"
-          className={`rounded-full mr-10 ${
-            isResolved 
-              ? 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500' 
-              : 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
-          }`}
-        >
-          {isResolved ? 'Resolved' : 'Unresolved'}
-        </Button> */}
+        <Button
+        variant="outline"
+        onClick={handleStatusChange}
+        className={`rounded-full mr-10 capitalize ${
+          alert.status.toLowerCase() === 'resolved'
+            ? 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500'
+            : alert.status.toLowerCase() === 'in progress'
+            ? 'bg-yellow-600/20 hover:bg-yellow-600/20 text-yellow-500 hover:text-yellow-500'
+            : 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
+        }`}
+      >
+        {alert.status}
+      </Button>
 
-        <StatusButton/>
       </div>
 
       
