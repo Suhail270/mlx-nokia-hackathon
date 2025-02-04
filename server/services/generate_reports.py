@@ -1,6 +1,7 @@
 import sqlite3
 from http.client import HTTPException
 import os
+import textwrap
 from openai import OpenAI
 from dotenv import load_dotenv
 import re
@@ -114,8 +115,12 @@ def save_report_to_pdf(report_text, filename="incident_report.pdf"):
     # Write text inside the border
     y_position = height - margin_y - 20  # Start position for text
     line_height = 14  # Spacing between lines
-
+    max_line_length = 80
+    wrapped_lines = []
     for line in report_text.split("\n"):
+        wrapped_lines.extend(textwrap.wrap(line, width=max_line_length))
+
+    for line in wrapped_lines:
         words = re.split(r"(\*\*.*?\*\*)", line)  
         x_position = margin_x + 10
 
@@ -140,3 +145,5 @@ def save_report_to_pdf(report_text, filename="incident_report.pdf"):
 
     c.save()
     print(f"Report saved as {filename}")
+
+
