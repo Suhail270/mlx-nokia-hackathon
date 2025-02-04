@@ -25,7 +25,7 @@ def extract_post_think_content(text: str) -> str:
 def engage_llm(prompt):
     try:
         messages = [
-            {"role": "system", "content": "You are an AI assistant generating a weekly incident report."},
+            {"role": "system", "content": "You are an AI assistant generating a periodic incident report."},
             {"role": "user", "content": prompt}
         ]
         response = llm_client.chat.completions.create(
