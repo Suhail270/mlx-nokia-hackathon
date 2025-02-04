@@ -17,36 +17,52 @@ class Alert(Base):
     video_path = Column(String)
     geo_info = Column(String)
     responder_type = Column(String)
+    response_time = Column(Integer)
+    resolution_time = Column(Integer)
+    status = Column(String)
 
-    police = relationship("Police", back_populates="alert", cascade="all, delete")
-    firefighter = relationship("Firefighter", back_populates="alert", cascade="all, delete")
-    ambulance = relationship("Ambulance", back_populates="alert", cascade="all, delete")
-    drone = relationship("Drone", back_populates="alert", cascade="all, delete")
+    dispatch = relationship("Dispatch", back_populates="alert", cascade="all, delete-orphan")
+
 
 class Police(Base):
     __tablename__ = "police"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     zone = Column(String)
 
 class Firefighter(Base):
     __tablename__ = "firefighter"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     zone = Column(String)
 
 class Ambulance(Base):
     __tablename__ = "ambulance"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     zone = Column(String)
 
-    alert = relationship("Alert", back_populates="ambulance")
 
 class Drone(Base):
     __tablename__ = "drone"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     zone = Column(String)
 
-    alert = relationship("Alert", back_populates="drone")
+class Dispatch(Base):
+    __tablename__ = "dispatch"
+
+    alert_id = Column(String, ForeignKey("alerts.id"))
+    police_id = Column(String, ForeignKey("police.id"))
+    ambulance_id = Column(String, ForeignKey("ambulance.id"))
+    firefighter_id = Column(String, ForeignKey("firefighter.id"))
+    drone_id = Column(String, ForeignKey("drone.id"))
+    dispatch_time = Column(String)
+
+    alert = relationship("Alert", back_populates="dispatch")
+    police = relationship("Police")
+    ambulance = relationship("Ambulance")
+    firefighter = relationship("Firefighter")
+    drone = relationship("Drone")
+
+
