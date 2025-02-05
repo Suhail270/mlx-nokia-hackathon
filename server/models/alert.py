@@ -65,4 +65,3 @@ class Dispatch(Base):
     firefighter = relationship("Firefighter")
     drone = relationship("Drone")
 
-
