@@ -12,7 +12,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 import os.path
-# from db.session import get_db
+from db.session import get_db
 router = APIRouter()
 
 load_dotenv()
@@ -103,7 +103,7 @@ def generate_report_from_data(incidents):
     """
     return prompt
 
-def save_report_to_pdf(report_text, filename="server/report/incident_report.pdf"):
+def save_report_to_pdf(report_text, filename="./reports/pdf/incident_report.pdf"):
     """Generate a PDF file with a bordered report."""
     c = canvas.Canvas(filename, pagesize=letter)
     width, height = letter
@@ -149,6 +149,9 @@ def save_report_to_pdf(report_text, filename="server/report/incident_report.pdf"
             c.setLineWidth(2)
             c.rect(margin_x, margin_y, text_width, text_height)
 
+    directory = "./reports/pdf" 
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     c.save()
     
     print(f"Report saved as {filename}")
