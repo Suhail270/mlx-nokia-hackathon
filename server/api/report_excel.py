@@ -86,3 +86,167 @@ def get_excel_data(days: int, db: Session = Depends(get_db)):
 
     # Return the file as a response
     return FileResponse(file_path, filename=file_name)
+from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
+from io import BytesIO
+import pandas as pd
+from db.session import get_db
+from models.alert import Alert, Dispatch, Ambulance, Police, Firefighter, Drone
+from sqlalchemy.orm import Session
+from datetime import datetime, timedelta
+
+router = APIRouter()
+
+@router.get("/reports/excel/{days}")
+def get_excel_data(days: int, db: Session = Depends(get_db)):
+    # Get the date range
+    date_from = datetime.now() - timedelta(days=days)
+
+    # Query the database
+    alerts = db.query(Alert).filter(Alert.timestamp >= date_from).all()
+    ambulances = db.query(Ambulance).all()
+    police = db.query(Police).all()
+    firefighters = db.query(Firefighter).all()
+    drones = db.query(Drone).all()
+    dispatches = db.query(Dispatch).filter(Dispatch.dispatch_time >= date_from).all()
+
+    # Convert data into lists for Pandas
+    alerts_data = [{
+        "id": alert.id,
+        "type": alert.type,
+        "severity": alert.severity,
+        "location": alert.location,
+        "timestamp": alert.timestamp,
+        "responder_type": alert.responder_type,
+        "response_time": alert.response_time,
+        "resolution_time": alert.resolution_time,
+        "status": alert.status
+    } for alert in alerts]
+
+    ambulances_data = [{"id": item.id, "zone": item.zone} for item in ambulances]
+    police_data = [{"id": item.id, "zone": item.zone} for item in police]
+    firefighters_data = [{"id": item.id, "zone": item.zone} for item in firefighters]
+    drones_data = [{"id": item.id, "zone": item.zone} for item in drones]
+    dispatches_data = [{
+        "id": dispatch.id,
+        "alert_id": dispatch.alert_id,
+        "police_id": dispatch.police_id,
+        "drone_id": dispatch.drone_id,
+        "ambulance_id": dispatch.ambulance_id,
+        "firefighter_id": dispatch.firefighter_id,
+        "dispatch_time": dispatch.dispatch_time
+    } for dispatch in dispatches]
+
+    # Create pandas DataFrame for each type of data
+    dfs = {
+        "Alerts": pd.DataFrame(alerts_data),
+        "Ambulances": pd.DataFrame(ambulances_data),
+        "Police": pd.DataFrame(police_data),
+        "Firefighters": pd.DataFrame(firefighters_data),
+        "Drones": pd.DataFrame(drones_data),
+        "Dispatches": pd.DataFrame(dispatches_data),
+    }
+
+    # Create a BytesIO buffer to save the file in memory
+    excel_buffer = BytesIO()
+
+    # Create an Excel writer and save data to the buffer
+    with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
+        for sheet_name, df in dfs.items():
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
+
+    # Reset the buffer position for reading
+    excel_buffer.seek(0)
+
+    # Generate filename dynamically
+    num_alerts = len(alerts)
+    file_name = f"{datetime.now().strftime('%d-%m')}-{num_alerts}.xlsx"
+
+    # Return the file as a streaming response for direct download
+    return StreamingResponse(
+        excel_buffer,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f"attachment; filename={file_name}"}
+    )
+from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
+from io import BytesIO
+import pandas as pd
+from db.session import get_db
+from models.alert import Alert, Dispatch, Ambulance, Police, Firefighter, Drone
+from sqlalchemy.orm import Session
+from datetime import datetime, timedelta
+
+router = APIRouter()
+
+@router.get("/reports/excel/{days}")
+def get_excel_data(days: int, db: Session = Depends(get_db)):
+    # Get the date range
+    date_from = datetime.now() - timedelta(days=days)
+
+    # Query the database
+    alerts = db.query(Alert).filter(Alert.timestamp >= date_from).all()
+    ambulances = db.query(Ambulance).all()
+    police = db.query(Police).all()
+    firefighters = db.query(Firefighter).all()
+    drones = db.query(Drone).all()
+    dispatches = db.query(Dispatch).filter(Dispatch.dispatch_time >= date_from).all()
+
+    # Convert data into lists for Pandas
+    alerts_data = [{
+        "id": alert.id,
+        "type": alert.type,
+        "severity": alert.severity,
+        "location": alert.location,
+        "timestamp": alert.timestamp,
+        "responder_type": alert.responder_type,
+        "response_time": alert.response_time,
+        "resolution_time": alert.resolution_time,
+        "status": alert.status
+    } for alert in alerts]
+
+    ambulances_data = [{"id": item.id, "zone": item.zone} for item in ambulances]
+    police_data = [{"id": item.id, "zone": item.zone} for item in police]
+    firefighters_data = [{"id": item.id, "zone": item.zone} for item in firefighters]
+    drones_data = [{"id": item.id, "zone": item.zone} for item in drones]
+    dispatches_data = [{
+        "id": dispatch.id,
+        "alert_id": dispatch.alert_id,
+        "police_id": dispatch.police_id,
+        "drone_id": dispatch.drone_id,
+        "ambulance_id": dispatch.ambulance_id,
+        "firefighter_id": dispatch.firefighter_id,
+        "dispatch_time": dispatch.dispatch_time
+    } for dispatch in dispatches]
+
+    # Create pandas DataFrame for each type of data
+    dfs = {
+        "Alerts": pd.DataFrame(alerts_data),
+        "Ambulances": pd.DataFrame(ambulances_data),
+        "Police": pd.DataFrame(police_data),
+        "Firefighters": pd.DataFrame(firefighters_data),
+        "Drones": pd.DataFrame(drones_data),
+        "Dispatches": pd.DataFrame(dispatches_data),
+    }
+
+    # Create a BytesIO buffer to save the file in memory
+    excel_buffer = BytesIO()
+
+    # Create an Excel writer and save data to the buffer
+    with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
+        for sheet_name, df in dfs.items():
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
+
+    # Reset the buffer position for reading
+    excel_buffer.seek(0)
+
+    # Generate filename dynamically
+    num_alerts = len(alerts)
+    file_name = f"{datetime.now().strftime('%d-%m')}-{num_alerts}.xlsx"
+
+    # Return the file as a streaming response for direct download
+    return StreamingResponse(
+        excel_buffer,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f"attachment; filename={file_name}"}
+    )
