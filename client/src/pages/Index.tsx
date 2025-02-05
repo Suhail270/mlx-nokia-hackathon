@@ -7,6 +7,7 @@ import AlertDetails from '@/components/AlertDetails';
 import { AlertType } from '@/types/alerts';
 import { LanguageProvider } from '@/pages/LanguageContext';
 import { LanguageContext } from '@/pages/LanguageContext';
+import ReportPage from '@/components/Report';  
 
 const Index = () => {
   const [alerts, setAlerts] = useState<AlertType[]>([]);
@@ -30,6 +31,11 @@ const Index = () => {
     navigate(`/alert/${alert.id}`);
   };
 
+  // Add a handler to navigate to the Report page
+  const handleReportClick = () => {
+    navigate('/report');
+  };
+
   if (!languageContext) {
     return <div>Loading...</div>;
   }
@@ -39,7 +45,12 @@ const Index = () => {
       <div className="hidden sm:block pl-80 pr-0">
         <div className="p-6">
           <div className="flex justify-between items-center pr-10">
-            <h3 className="text-black">hi</h3>
+            <button 
+              onClick={handleReportClick}
+              className='rounded-full p-3 bg-yellow-600/20 hover:bg-yellow-600/20 text-yellow-500 hover:text-yellow-500'
+              >
+                Report
+              </button>
             <button
               onClick={languageContext.toggleLanguage}
               className={`rounded-full p-3 ${
@@ -59,56 +70,6 @@ const Index = () => {
     </div>
   );
 };
-// const Index = () => {
-//   const [alerts, setAlerts] = useState<AlertType[]>([]);
-//   const [midpoint, setMidpoint] = useState<[number, number]>([40.7128, -74.006]);
-//   const [isArabic, setIsArabic] = useState(false);
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     axios
-//       .get(`http://127.0.0.1:8000/api/alerts_with_midpoint?lang=${isArabic ? 'ar' : 'en'}`)
-//       .then((res) => {
-//         setAlerts(res.data.alerts);
-//         setMidpoint(res.data.midpoint);
-//       })
-//       .catch((err) => console.error("Error fetching alerts:", err));
-//   }, []);
-
-//   const handleAlertSelect = (alert: AlertType) => {
-//     navigate(`/alert/${alert.id}`);
-//   };
-
-//   return (
-//     <div className="h-screen w-full overflow-hidden bg-background text-foreground">
-//       <div className="pl-80 pr-0 mt-3 ">
-//         <div className="p-6">
-//           <div className="flex justify-between items-center pr-10">
-//             <h3 className="text-black">hi</h3>
-//           <button
-//           onClick={() => setIsArabic(!isArabic)}
-//           variant="outline"
-//           className={`rounded-full p-3 ' ${
-//             isArabic 
-//               ? 'bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
-//               : 'bg-green-600/20 hover:bg-green-600/20 text-green-500 hover:text-green-500' 
-//           }`}
-//         >
-//           {isArabic ? 'English' : 'Arabic'}
-//         </button>
-//           </div>
-//           <br></br>
-//           <Map
-//             alerts={alerts}
-//             midpoint={midpoint}
-//             onAlertSelect={handleAlertSelect}
-//           />
-//         </div>
-//       </div>
-//       <AlertList alerts={alerts} onAlertSelect={handleAlertSelect} />
-//     </div>
-//   );
-// };
 
 const AlertDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -211,6 +172,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/alert/:id" element={<AlertDetailPage />} />
+        <Route path="/report" element={<ReportPage />} /> 
       </Routes>
     </Router>
     </LanguageProvider>
