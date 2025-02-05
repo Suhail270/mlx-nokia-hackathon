@@ -78,7 +78,7 @@ def create_reports(interval ,db=Depends(get_db)):
     # conn.close()
 
     
-    alert = db.query(Alert).filter(Alert.timestamp <= (datetime.now() - timedelta(days=int(interval)))).all()
+    alert = db.query(Alert).filter(Alert.timestamp >= (datetime.now() - timedelta(days=int(interval)))).all()
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found.")
     data = jsonable_encoder(alert)
