@@ -21,6 +21,7 @@ class Alert(Base):
     resolution_time = Column(Integer)
     status = Column(String)
     dispatch = relationship("Dispatch", back_populates="alert", cascade="all, delete-orphan")
+    aiSummary = Column(String)
 
 
 class Police(Base):
@@ -64,5 +65,4 @@ class Dispatch(Base):
     ambulance = relationship("Ambulance")
     firefighter = relationship("Firefighter")
     drone = relationship("Drone")
-
 
