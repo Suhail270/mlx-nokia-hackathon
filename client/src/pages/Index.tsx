@@ -47,7 +47,7 @@ const Index = () => {
           <div className="flex justify-between items-center pr-10">
             <button 
               onClick={handleReportClick}
-              className='rounded-full p-3 bg-red-600/20 hover:bg-red-600/20 text-red-500 hover:text-red-500'
+              className='rounded-full p-3 bg-yellow-600/20 hover:bg-yellow-600/20 text-yellow-500 hover:text-yellow-500'
               >
                 Report
               </button>
