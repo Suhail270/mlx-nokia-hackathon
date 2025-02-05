@@ -29,18 +29,24 @@ class Police(Base):
 
     id = Column(String, primary_key=True, index=True)
     zone = Column(String)
+    startZoneLat = Column(String)
+    startZoneLong = Column(String)
 
 class Firefighter(Base):
     __tablename__ = "firefighter"
 
     id = Column(String, primary_key=True, index=True)
     zone = Column(String)
+    startZoneLat = Column(String)
+    startZoneLong = Column(String)
 
 class Ambulance(Base):
     __tablename__ = "ambulance"
 
     id = Column(String, primary_key=True, index=True)
     zone = Column(String)
+    startZoneLat = Column(String)
+    startZoneLong = Column(String)
 
 
 class Drone(Base):
@@ -48,6 +54,8 @@ class Drone(Base):
 
     id = Column(String, primary_key=True, index=True)
     zone = Column(String)
+    startZoneLat = Column(String)
+    startZoneLong = Column(String)
 
 class Dispatch(Base):
     __tablename__ = "dispatch"

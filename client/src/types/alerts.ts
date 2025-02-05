@@ -19,21 +19,29 @@ export interface AlertType {
 export interface PoliceType {
   id: string;
   zone: string;
+  startZoneLat: string;
+  startZoneLong: string;
 }
 
 export interface FirefighterType {
   id: string;
   zone: string;
+  startZoneLat: string;
+  startZoneLong: string;
 }
 
 export interface DroneType {
   id: string;
   zone: string;
+  startZoneLat: string;
+  startZoneLong: string;
 }
 
 export interface AmbulanceType {
   id: string;
   zone: string;
+  startZoneLat: string;
+  startZoneLong: string;
 }
 
 export interface DispatchType {

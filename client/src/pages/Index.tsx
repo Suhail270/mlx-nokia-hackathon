@@ -4,15 +4,24 @@ import Map from '@/components/Map';
 import axios from 'axios';
 import AlertList from '@/components/AlertList';
 import AlertDetails from '@/components/AlertDetails';
-import { AlertType } from '@/types/alerts';
+import { AlertType, PoliceType } from '@/types/alerts';
 import { LanguageProvider } from '@/pages/LanguageContext';
 import { LanguageContext } from '@/pages/LanguageContext';
 
 const Index = () => {
   const [alerts, setAlerts] = useState<AlertType[]>([]);
+  // const [police, setPolice] = useState<PoliceType[]>([]);
   const [midpoint, setMidpoint] = useState<[number, number]>([40.7128, -74.006]);
   const navigate = useNavigate();
   const languageContext = useContext(LanguageContext);
+  const policeData = [
+    { 
+      id: '1', 
+      zone: 'Ha', 
+      startZoneLat: '24.49274', 
+      startZoneLong: '54.36788' 
+    }
+  ];
 
   useEffect(() => {
     if (languageContext) {
@@ -52,7 +61,7 @@ const Index = () => {
             </button>
           </div>
           <br />
-          <Map alerts={alerts} midpoint={midpoint} onAlertSelect={handleAlertSelect} />
+          <Map alerts={alerts}  policeZones={policeData} midpoint={midpoint} onAlertSelect={handleAlertSelect} />
         </div>
       </div>
       <AlertList alerts={alerts} onAlertSelect={handleAlertSelect} />
