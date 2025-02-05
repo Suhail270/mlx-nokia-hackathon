@@ -67,7 +67,6 @@ class Dispatch(Base):
     firefighter_id = Column(String, ForeignKey("firefighter.id"))
     drone_id = Column(String, ForeignKey("drone.id"))
     dispatch_time = Column(String)
-
     alert = relationship("Alert", back_populates="dispatch")
     police = relationship("Police")
     ambulance = relationship("Ambulance")
