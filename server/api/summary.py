@@ -142,6 +142,8 @@ def get_alert_summary(alert_id: int, lang: str = 'en', db=Depends(get_db)):
         "summary": processed_summary
     }
 
+    insert_ai_summary(alert_id, processed_summary, db)
+
     return translation_service.translate_dict(response_data, lang)
 
 @router.get("/summary/{alert_id}")
@@ -160,3 +162,4 @@ def summary_retrieval(alert_id: int, lang: str = 'en', db=Depends(get_db)):
     }
     
     return translation_service.translate_dict(response_data, lang)
+
