@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, responses, status,FastAPI
 from fastapi.encoders import jsonable_encoder
 import json
-
+from fpdf import FPDF
+from PyPDF2 import PdfReader, PdfWriter
+from datetime import datetime
 import sqlite3
 import os
 import textwrap
@@ -144,6 +146,43 @@ def generate_report_from_data(incidents):
    
     return prompts
 
+
+def create_cover_page(logo_path, output_pdf):
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+    
+    # Add logo
+    pdf.image(logo_path, x=10, y=10, w=30)  # Adjust x, y, w as needed
+    
+    # Title
+    pdf.set_font("Arial", "B", 24)
+    
+    pdf.cell(180, 40, "Incident Report", ln=True, align='C')
+    
+    # Date
+    pdf.set_font("Arial", "", 14)
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    pdf.cell(180, 10, f"Date: {date_str}", ln=True, align='C')
+    
+    pdf.output(output_pdf)
+
+def merge_pdfs(cover_pdf, original_pdf, output_pdf):
+    writer = PdfWriter()
+    
+    # Add cover page
+    cover_reader = PdfReader(cover_pdf)
+    writer.add_page(cover_reader.pages[0])
+    
+    # Add original PDF pages
+    original_reader = PdfReader(original_pdf)
+    for page in original_reader.pages:
+        writer.add_page(page)
+    
+    # Write final merged PDF
+    with open(output_pdf, "wb") as f:
+        writer.write(f)
+
 def save_report_to_pdf(report_texts, filename="./reports/pdf/incident_report.pdf"):
     """Generate a PDF file with a bordered report."""
     c = canvas.Canvas(filename, pagesize=letter)
@@ -233,6 +272,10 @@ def save_report_to_pdf(report_texts, filename="./reports/pdf/incident_report.pdf
     if not os.path.exists(directory):
         os.makedirs(directory)
     c.save()
+
+    logo_path = os.path.abspath("api/logo/nokia.png")
+    create_cover_page(logo_path=logo_path,output_pdf="./reports/pdf/cover.pdf")
+    merge_pdfs(cover_pdf="./reports/pdf/cover.pdf",original_pdf=filename,output_pdf=filename)
     
     print(f"Report saved as {filename}")
     return filename
