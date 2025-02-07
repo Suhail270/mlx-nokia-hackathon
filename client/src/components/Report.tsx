@@ -108,7 +108,17 @@ const ReportPage = () => {
     const days = computeDays();
     if (days === null) return; // No valid day range selected
     // Force download by navigating to the excel endpoint:
-    const url = `http://localhost:8000/api/reports/excel/${days}`;
+    // const url = `http://127.0.0.1:8000/api/report-pdf/${days}`;
+    const url = `http://127.0.0.1:8000/apireports/excel/${days}`;
+    window.open(url, '_blank');
+  };
+
+  const handleDownloadpdf = () => {
+    const days = computeDays();
+    if (days === null) return; // No valid day range selected
+    // Force download by navigating to the excel endpoint:
+    const url = `http://127.0.0.1:8000/api/report-pdf/${days}`;
+    // const url = `http://127.0.0.1:8000/apireports/excel/${days}`;
     window.open(url, '_blank');
   };
 
@@ -117,10 +127,10 @@ const ReportPage = () => {
     return (
       <div className="overflow-x-auto shadow-2xl border border-gray-700 rounded-lg bg-gradient-to-b from-[#161616] to-[#1f1f1f]">
         <table className="min-w-full text-sm text-left text-gray-300">
-          <thead className="bg-gradient-to-r from-green-600 via-yellow-400 to-red-700 text-white border-b border-gray-600">
-            <tr>
+          <thead className="bg-gradient-to-r from-green-600 via-yellow-400 to-red-700 text-white border-b border-gray-600 text-center">
+            <tr className=' '>
               {headers.map((header) => (
-                <th key={header} className="px-4 py-3 font-semibold border-r border-gray-500 last:border-r-0 uppercase tracking-wider">
+                <th key={header} className="px-4 py-3 font-semibold border-r border-gray-500 last:border-r-0 uppercase tracking-wider ">
                   {header}
                 </th>
               ))}
@@ -128,11 +138,11 @@ const ReportPage = () => {
           </thead>
           <tbody>
             {rows.map((row: any, idx: number) => (
-              <tr key={rowKeyFn(row) ?? idx} className="border-b border-gray-600 last:border-b-0 hover:bg-gray-800 transition-colors duration-200">
+              <tr key={rowKeyFn(row) ?? idx} className="border-b border-gray-600 last:border-b-0 hover:bg-gray-800 transition-colors duration-200 ">
                 {headers.map((header, colIdx) => (
                   <td
                     key={colIdx}
-                    className="px-4 py-3 border-r border-gray-600 last:border-r-0 whitespace-nowrap"
+                    className="px-4 py-3 border-r border-gray-600 last:border-r-0 whitespace-nowrap text-center"
                   >
                     {row[header.toLowerCase().replace(/\s/g, '_')] || row[header.toLowerCase()] || ''}
                   </td>
@@ -234,7 +244,7 @@ const ReportPage = () => {
         <div className="relative mb-4">
           <Button
             onClick={toggleDropdown}
-            className="bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded px-4 py-2 hover:scale-105 transition-transform"
+            className="bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded px-4 py-2 hover:scale-105 transition-transform "
           >
             {selectedOption ? `Selected: ${selectedOption}` : 'Select Time Period'}
           </Button>
@@ -294,7 +304,7 @@ const ReportPage = () => {
         {reportData && (
           <>
             {/* Tabs / "Worksheets" */}
-            <div className="mb-4 flex flex-wrap gap-2">
+            <div className="mb-4 flex flex-wrap gap-2 ">
               {([
                 'Alerts',
                 'Ambulances',
@@ -322,13 +332,32 @@ const ReportPage = () => {
             <div>{renderSheet()}</div>
 
             {/* NEW BUTTON: Download Excel */}
-            <div className="mt-6">
-              <Button
-                onClick={handleDownloadExcel}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-              >
-                Download Excel
-              </Button>
+            <div className="flex justify-between items-center">
+                <div className="mt-6 ">
+                <Button
+                    onClick={handleDownloadExcel}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                >
+                    Download Excel
+                </Button>
+                </div>
+            </div>
+            <div className="mt-10">
+                <h2 className="text-xl text-white mb-4">Preview of PDF</h2>
+                {/* REPLACE the src below with your actual PDF path */}
+                <iframe
+                    src="/incident_reportFinal.pdf"
+                    title="PDF Preview"
+                    className="w-full h-[600px] border border-gray-700"
+                ></iframe>
+            </div>
+            <div className="mt-6 ">
+            <Button
+                onClick={handleDownloadpdf}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+            >
+                Download Overall Report
+            </Button>
             </div>
           </>
         )}
