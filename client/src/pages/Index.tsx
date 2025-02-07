@@ -7,6 +7,7 @@ import AlertDetails from '@/components/AlertDetails';
 import { AlertType, PoliceType, AmbulanceType, DroneType, FirefighterType } from '@/types/alerts';
 import { LanguageProvider } from '@/pages/LanguageContext';
 import { LanguageContext } from '@/pages/LanguageContext';
+import ReportPage from '@/components/Report';  
 
 const Index = () => {
   const [alerts, setAlerts] = useState<AlertType[]>([]);
@@ -38,6 +39,11 @@ const Index = () => {
     navigate(`/alert/${alert.id}`);
   };
 
+  // Add a handler to navigate to the Report page
+  const handleReportClick = () => {
+    navigate('/report');
+  };
+
   if (!languageContext) {
     return <div>Loading...</div>;
   }
@@ -47,7 +53,12 @@ const Index = () => {
       <div className="hidden sm:block pl-80 pr-0">
         <div className="p-6">
           <div className="flex justify-between items-center pr-10">
-            <h3 className="text-black">hi</h3>
+            <button 
+              onClick={handleReportClick}
+              className='rounded-full p-3 bg-yellow-600/20 hover:bg-yellow-600/20 text-yellow-500 hover:text-yellow-500'
+              >
+                Report
+              </button>
             <button
               onClick={languageContext.toggleLanguage}
               className={`rounded-full p-3 ${
@@ -169,6 +180,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/alert/:id" element={<AlertDetailPage />} />
+        <Route path="/report" element={<ReportPage />} /> 
       </Routes>
     </Router>
     </LanguageProvider>
