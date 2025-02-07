@@ -81,7 +81,14 @@ def call_vlm_model(alert_id: int, db=Depends(get_db)):
         logger.error(f"Error in video analysis: {e}")
         raise HTTPException(status_code=500, detail=f"Error processing video: {str(e)}")
 
-@router.get("/summary/{alert_id}")
+def insert_ai_summary(alert_id: int, summary: str, db=Depends(get_db)):
+    alert = db.query(Alert).filter(Alert.id == str(alert_id)).first()
+    if not alert:
+        raise HTTPException(status_code=404, detail="Alert not found.")
+    
+    alert.aiSummary = summary
+    db.commit()
+
 def get_alert_summary(alert_id: int, lang: str = 'en', db=Depends(get_db)):
     alert = db.query(Alert).filter(Alert.id == str(alert_id)).first()
     if not alert:
@@ -95,7 +102,6 @@ def get_alert_summary(alert_id: int, lang: str = 'en', db=Depends(get_db)):
         f"Timestamp: {alert.timestamp}\n"
         f"Description: {alert.description}\n"
         f"Image: {alert.image}"
-        f"Other Information: {alert.geo_info}"
     )
     
     vlm_analysis = call_vlm_model(alert_id, db)
@@ -135,5 +141,25 @@ def get_alert_summary(alert_id: int, lang: str = 'en', db=Depends(get_db)):
         "alert_id": alert_id,
         "summary": processed_summary
     }
+
+    insert_ai_summary(alert_id, processed_summary, db)
+
+    return translation_service.translate_dict(response_data, lang)
+
+@router.get("/summary/{alert_id}")
+def summary_retrieval(alert_id: int, lang: str = 'en', db=Depends(get_db)):
+    alert = db.query(Alert).filter(Alert.id == str(alert_id)).first()
+
+    if not alert:
+        raise HTTPException(status_code=404, detail="Alert not found.")
+    
+    if not alert.aiSummary:
+        return get_alert_summary(alert_id, lang, db)
+    
+    response_data = {
+        "alert_id": alert_id,
+        "summary": alert.aiSummary
+    }
+    
     return translation_service.translate_dict(response_data, lang)
 
