@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, responses, status,FastAPI
 from fastapi.encoders import jsonable_encoder
 import json
- 
 import sqlite3
 import os
 import textwrap
@@ -63,7 +62,6 @@ def create_reports(interval ,db=Depends(get_db)):
     # db_path = os.path.join(BASE_DIR, "../alerts.db")
     # conn = sqlite3.connect(db_path)
     # cursor = conn.cursor()
- 
     # query = f"""
     # SELECT type, severity, location, status
     # FROM alerts
@@ -79,6 +77,7 @@ def create_reports(interval ,db=Depends(get_db)):
  
    
     alert = db.query(Alert).filter(Alert.timestamp >= (datetime.now() - timedelta(days=int(interval)))).all()
+    
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found.")
     data = jsonable_encoder(alert)
@@ -90,27 +89,23 @@ def create_reports(interval ,db=Depends(get_db)):
         filtered_json = {key: json_obj[key] for key in keys_to_keep if key in json_obj}
         print("curr->",filtered_json)
         incidents.append(filtered_json)
-   
-   
+        
     incident_text = "\n".join(
         f"Date: Type: {row["type"]}, Severity: {row["severity"]}, Location: {row["location"]}, Status: {row["status"]}"
         for row in incidents
     )
     prompt = generate_report_from_data(incident_text)
     processed_summary = engage_llm(prompt)
-    PDF_FILE_PATH = save_report_to_pdf(processed_summary)
- 
+    PDF_FILE_PATH = save_report_to_pdf(processed_summary) 
     return FileResponse(PDF_FILE_PATH, media_type="application/pdf", filename="incident_report.pdf")
  
 def generate_report_from_data(incidents):
- 
+
     # Create the prompt for Gen AI
     prompt = f"""
     You are an AI assistant generating a periodic (defined in number of days) incident report. Be straight forward and maintain a structure that can be placed into a pdf file. Do not talk to me. Only give me the text that would be put in the PDF.
     Analyze the following incident data and summarize key insights:
- 
     {incidents}
- 
     Generate a structured report with:
     - Total incidents
     - Most common incident type
@@ -120,7 +115,7 @@ def generate_report_from_data(incidents):
     - Key observations & recommendations
     """
     return prompt
- 
+
 def save_report_to_pdf(report_text, filename="./reports/pdf/incident_report.pdf"):
     """Generate a PDF file with a bordered report."""
     c = canvas.Canvas(filename, pagesize=letter)
@@ -166,8 +161,9 @@ def save_report_to_pdf(report_text, filename="./reports/pdf/incident_report.pdf"
             c.setStrokeColor(colors.black)
             c.setLineWidth(2)
             c.rect(margin_x, margin_y, text_width, text_height)
- 
-    directory = "./reports/pdf"
+
+    directory = "./reports/pdf" 
+
     if not os.path.exists(directory):
         os.makedirs(directory)
     c.save()

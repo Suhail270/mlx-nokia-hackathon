@@ -21,6 +21,7 @@ class Alert(Base):
     resolution_time = Column(Integer)
     status = Column(String)
     dispatch = relationship("Dispatch", back_populates="alert", cascade="all, delete-orphan")
+    aiSummary = Column(String)
 
 
 class Police(Base):
@@ -28,18 +29,24 @@ class Police(Base):
 
     id = Column(String, primary_key=True, index=True)
     zone = Column(String)
+    startZoneLat = Column(String)
+    startZoneLong = Column(String)
 
 class Firefighter(Base):
     __tablename__ = "firefighter"
 
     id = Column(String, primary_key=True, index=True)
     zone = Column(String)
+    startZoneLat = Column(String)
+    startZoneLong = Column(String)
 
 class Ambulance(Base):
     __tablename__ = "ambulance"
 
     id = Column(String, primary_key=True, index=True)
     zone = Column(String)
+    startZoneLat = Column(String)
+    startZoneLong = Column(String)
 
 
 class Drone(Base):
@@ -47,6 +54,8 @@ class Drone(Base):
 
     id = Column(String, primary_key=True, index=True)
     zone = Column(String)
+    startZoneLat = Column(String)
+    startZoneLong = Column(String)
 
 class Dispatch(Base):
     __tablename__ = "dispatch"
@@ -58,11 +67,9 @@ class Dispatch(Base):
     firefighter_id = Column(String, ForeignKey("firefighter.id"))
     drone_id = Column(String, ForeignKey("drone.id"))
     dispatch_time = Column(String)
-
     alert = relationship("Alert", back_populates="dispatch")
     police = relationship("Police")
     ambulance = relationship("Ambulance")
     firefighter = relationship("Firefighter")
     drone = relationship("Drone")
-
 

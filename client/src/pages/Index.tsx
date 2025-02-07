@@ -4,13 +4,17 @@ import Map from '@/components/Map';
 import axios from 'axios';
 import AlertList from '@/components/AlertList';
 import AlertDetails from '@/components/AlertDetails';
-import { AlertType } from '@/types/alerts';
+import { AlertType, PoliceType, AmbulanceType, DroneType, FirefighterType } from '@/types/alerts';
 import { LanguageProvider } from '@/pages/LanguageContext';
 import { LanguageContext } from '@/pages/LanguageContext';
 import ReportPage from '@/components/Report';  
 
 const Index = () => {
   const [alerts, setAlerts] = useState<AlertType[]>([]);
+  const [policeData, setPolice] = useState<PoliceType[]>([]);
+  const [ambulanceData, setAmbulance] = useState<AmbulanceType[]>([]);
+  const [ffData, setFf] = useState<FirefighterType[]>([]);
+  const [droneData, setDrone] = useState<DroneType[]>([]);
   const [midpoint, setMidpoint] = useState<[number, number]>([40.7128, -74.006]);
   const navigate = useNavigate();
   const languageContext = useContext(LanguageContext);
@@ -22,6 +26,10 @@ const Index = () => {
         .then((res) => {
           setAlerts(res.data.alerts);
           setMidpoint(res.data.midpoint);
+          setPolice(res.data.police);
+          setAmbulance(res.data.ambulance);
+          setFf(res.data.firefighter);
+          setDrone(res.data.drone);
         })
         .catch((err) => console.error("Error fetching alerts:", err));
     }
@@ -63,7 +71,7 @@ const Index = () => {
             </button>
           </div>
           <br />
-          <Map alerts={alerts} midpoint={midpoint} onAlertSelect={handleAlertSelect} />
+          <Map alerts={alerts} policeZones={policeData} ambulanceZones={ambulanceData} firefighterZones={ffData} droneZone={droneData}  midpoint={midpoint} onAlertSelect={handleAlertSelect} />
         </div>
       </div>
       <AlertList alerts={alerts} onAlertSelect={handleAlertSelect} />
