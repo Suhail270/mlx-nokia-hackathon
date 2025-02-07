@@ -74,7 +74,7 @@ export async function getRouteOnRoad(
 export function animateMarkerAlongRoute(
   marker: L.Marker,
   routeCoords: L.LatLngExpression[],
-  durationMs: number = 5000
+  durationMs: number = 2000
 ) {
   let index = 0;
   const total = routeCoords.length;
