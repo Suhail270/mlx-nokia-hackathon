@@ -18,6 +18,7 @@ import os.path
 from db.session import get_db
 from models.alert import Alert
 from datetime import datetime,timedelta
+from PIL import Image
 router = APIRouter()
 
 load_dotenv()
@@ -59,7 +60,7 @@ def engage_llm(prompts):
                 if chunk.choices[0].delta.content is not None:
                     summary=summary+chunk.choices[0].delta.content
                     # print("break here!!")
-                    print(chunk.choices[0].delta.content, end="")
+                    # print(chunk.choices[0].delta.content, end="")
             
             processed_summary = extract_post_think_content(summary)
             sections.append(processed_summary)
@@ -147,18 +148,29 @@ def generate_report_from_data(incidents):
     return prompts
 
 
-def create_cover_page(logo_path, output_pdf):
+def get_scaled_dimensions(image_path, target_height):
+    """Returns the scaled width while maintaining the aspect ratio."""
+    img = Image.open(image_path)
+    width, height = img.size
+    aspect_ratio = width / height
+    scaled_width = target_height * aspect_ratio
+    return scaled_width, target_height
+
+def create_cover_page(logo_path,logo2_path, output_pdf):
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
     
+    first_logo_w, first_logo_h = get_scaled_dimensions(logo_path, 20)
+    second_logo_w, second_logo_h = get_scaled_dimensions(logo2_path, 20)
+
     # Add logo
-    pdf.image(logo_path, x=10, y=10, w=30)  # Adjust x, y, w as needed
-    
+    pdf.image(logo_path, x=10, y=10, w=first_logo_w,h=20)  # Adjust x, y, w as needed
+    pdf.image(logo2_path, x=130, y=10, w=second_logo_w,h=20)
     # Title
     pdf.set_font("Arial", "B", 24)
     
-    pdf.cell(180, 40, "Incident Report", ln=True, align='C')
+    pdf.cell(180, 80, "Incident Report", ln=True, align='C')
     
     # Date
     pdf.set_font("Arial", "", 14)
@@ -274,7 +286,8 @@ def save_report_to_pdf(report_texts, filename="./reports/pdf/incident_report.pdf
     c.save()
 
     logo_path = os.path.abspath("api/logo/nokia.png")
-    create_cover_page(logo_path=logo_path,output_pdf="./reports/pdf/cover.pdf")
+    logo2_path = os.path.abspath("api/logo/nyu.png")
+    create_cover_page(logo_path=logo_path,logo2_path=logo2_path,output_pdf="./reports/pdf/cover.pdf")
     merge_pdfs(cover_pdf="./reports/pdf/cover.pdf",original_pdf=filename,output_pdf=filename)
     
     print(f"Report saved as {filename}")
