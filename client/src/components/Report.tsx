@@ -341,14 +341,23 @@ const ReportPage = () => {
                     Download Excel
                 </Button>
                 </div>
-                <div className="mt-6 ">
-                <Button
-                    onClick={handleDownloadpdf}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-                >
-                    Download Overall Report
-                </Button>
-                </div>
+            </div>
+            <div className="mt-10">
+                <h2 className="text-xl text-white mb-4">Preview of PDF</h2>
+                {/* REPLACE the src below with your actual PDF path */}
+                <iframe
+                    src="/incident_reportFinal.pdf"
+                    title="PDF Preview"
+                    className="w-full h-[600px] border border-gray-700"
+                ></iframe>
+            </div>
+            <div className="mt-6 ">
+            <Button
+                onClick={handleDownloadpdf}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+            >
+                Download Overall Report
+            </Button>
             </div>
           </>
         )}
