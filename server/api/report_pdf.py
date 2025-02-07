@@ -161,12 +161,12 @@ def create_cover_page(logo_path,logo2_path, output_pdf):
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
     
-    first_logo_w, first_logo_h = get_scaled_dimensions(logo_path, 20)
-    second_logo_w, second_logo_h = get_scaled_dimensions(logo2_path, 20)
+    first_logo_w, first_logo_h = get_scaled_dimensions(logo_path, 25)
+    second_logo_w, second_logo_h = get_scaled_dimensions(logo2_path, 15)
 
     # Add logo
-    pdf.image(logo_path, x=10, y=10, w=first_logo_w,h=20)  # Adjust x, y, w as needed
-    pdf.image(logo2_path, x=130, y=10, w=second_logo_w,h=20)
+    pdf.image(logo_path, x=15, y=10, w=first_logo_w,h=25)  # Adjust x, y, w as needed
+    pdf.image(logo2_path, x=130, y=15, w=second_logo_w,h=15)
     # Title
     pdf.set_font("Arial", "B", 24)
     
@@ -286,7 +286,7 @@ def save_report_to_pdf(report_texts, filename="./reports/pdf/incident_report.pdf
     c.save()
 
     logo_path = os.path.abspath("api/logo/nokia.png")
-    logo2_path = os.path.abspath("api/logo/nyu.png")
+    logo2_path = os.path.abspath("api/logo/nyulogo.png")
     create_cover_page(logo_path=logo_path,logo2_path=logo2_path,output_pdf="./reports/pdf/cover.pdf")
     merge_pdfs(cover_pdf="./reports/pdf/cover.pdf",original_pdf=filename,output_pdf=filename)
     
